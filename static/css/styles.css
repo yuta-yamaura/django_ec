@@ -4281,11 +4281,6 @@ textarea.form-control-lg {
   width: 100%;
 }
 
-.card-img-toppage {
-  width: 50%;
-  height: 150px;
-}
-
 .card-img,
 .card-img-top {
   border-top-left-radius: var(--bs-card-inner-border-radius);
