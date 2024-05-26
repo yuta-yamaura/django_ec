@@ -29,18 +29,19 @@
                         <div class="fs-5 mb-5">
                             <span>{{ object.price }}円</span>
                         </div>
-                        <p class="lead">Lorem ipsum dolor sit amet consectetur adipisicing elit. Praesentium at dolorem quidem modi. Nam sequi consequatur obcaecati excepturi alias magni, accusamus eius blanditiis delectus ipsam minima ea iste laborum vero?</p>
-                        <div class="d-flex">
-                            <form action="/cart/add/" method="POST" class="">
+                        <p class="lead">説明文枠</p>
+                        <form action="/cart/add/" method="POST" class="">
                             {% csrf_token %}
+                            <div class="d-flex">
                             <input class="form-control text-center me-3" type="num" name="quantity" value="1" style="max-width: 3rem"/>
                                 <input type="hidden" name="item_pk" value="{{object.pk}}">
                                     <button class="btn btn-outline-dark flex-shrink-0" type="submit">
                                         <i class="bi-cart-fill me-1"></i>
                                         <a class="cart-logo">Add to cart</a>
                                     </button>
-                            </form>
-                        </div>
+                            
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
