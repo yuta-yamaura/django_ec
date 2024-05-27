@@ -29,7 +29,7 @@ SECRET_KEY = env("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['guarded-shelf-70321-a60a6fa9d3cc.herokuapp.com','localhost']
+ALLOWED_HOSTS = ['djangoec-294a4b387efb.herokuapp.com','localhost']
 
 
 # Application definition
