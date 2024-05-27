@@ -1,1 +1,1 @@
-web: gunicorn ec.wsgi
+web: gunicorn config.wsgi
