@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 import environ
-import os
+import dj_database_url
 
 from pathlib import Path
 
@@ -83,7 +83,7 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
-    "default": env.db(),
+    "default": dj_database_url.config(default=env('DATABASE_URL')),
 }
 
 
