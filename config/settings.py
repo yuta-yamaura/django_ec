@@ -11,9 +11,9 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 import environ
+import os
 
 from pathlib import Path
-import django_heroku
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -47,6 +47,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'whitenoise.middleware.WhiteNoiseMiddleware',#herokuのデプロイ用に追加
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -128,6 +129,8 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 MEDIA_URL = 'media/'
 
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
@@ -137,5 +140,3 @@ SITE_ID = 1     #追加
 LOGIN_URL = 'login/'
 LOGIN_REDIRECT_URL = 'accounts/profile/'
 LOGOUT_REDIRECT_URL = '/'
-
-django_heroku.settings(locals())
