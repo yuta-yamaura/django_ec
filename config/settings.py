@@ -47,7 +47,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    'whitenoise.middleware.WhiteNoiseMiddleware',#herokuのデプロイ用に追加
+    # 'whitenoise.middleware.WhiteNoiseMiddleware',#herokuのデプロイ用に追加
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -128,8 +128,6 @@ STATICFILES_DIRS = [str(BASE_DIR / "static")]
 MEDIA_ROOT = BASE_DIR / 'media'
 
 MEDIA_URL = 'media/'
-
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
