@@ -30,7 +30,7 @@ SECRET_KEY = env("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['djangoec-294a4b387efb.herokuapp.com','localhost']
+ALLOWED_HOSTS = ['.herokuapp.com','localhost']
 
 
 # Application definition
@@ -47,7 +47,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    # 'whitenoise.middleware.WhiteNoiseMiddleware',#herokuのデプロイ用に追加
+    'whitenoise.middleware.WhiteNoiseMiddleware',#herokuの静的ファイル読み込み用に追加
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -83,7 +83,7 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
-    "default": dj_database_url.config(default=env('DATABASE_URL'),conn_max_age=600, ssl_require=True),
+    "default": dj_database_url.config(default=env('DATABASE_URL')),
 }
 
 
