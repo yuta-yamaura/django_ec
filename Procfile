@@ -1,2 +1,2 @@
-web: gunicorn config.wsgi --preload
+web: gunicorn django2ec.wsgi --preload
 release: python manage.py migrate
