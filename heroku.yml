@@ -2,4 +2,4 @@ build:
   docker:
     web: Dockerfile
 run:
-  web: gunicorn django2ec.wsgi --log-file -
+  web: gunicorn config.wsgi --log-file -
