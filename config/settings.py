@@ -32,6 +32,7 @@ SECRET_KEY = env("SECRET_KEY")
 DEBUG = False
 
 ALLOWED_HOSTS = ['.herokuapp.com','localhost']
+CSRF_TRUSTED_ORIGINS = ['.herokuapp.com/admin']
 
 
 # Application definition
