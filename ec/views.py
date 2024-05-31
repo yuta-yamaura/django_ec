@@ -16,7 +16,7 @@ class ProductDetailView(DetailView):
     template_name = 'detail.html'
 
 def redirect_site(request): # herokuデプロイ用
-    return redirect('https://djangoec-294a4b387efb.herokuapp.com/')
+    return redirect('https://django2ec-d9aba89433ee.herokuapp.com/')
 
 class CartListView(ListView):
     model = ProductModel
