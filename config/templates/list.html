@@ -24,11 +24,12 @@
         <section class="py-5">
             <div class="container px-4 px-lg-5 mt-5">
                 <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+                {% load cloudinary %}
                 {% for product in object_list %}
                     <div class="col mb-5">
                         <a href="/detail/{{product.pk}}/"><div class="card h-100">
                             <!-- Product image-->
-                            <img class="card-img-top hoge object-fit-cover d-flex align-items-stretch row-height" src="{{ product.image.url }}" alt="..." id="hoge"/>
+                            <img class="card-img-top hoge object-fit-cover d-flex align-items-stretch row-height" src="{{ cloudinary product.image.url }}" alt="..." id="hoge"/>
                             <!-- Product details-->
                             <div class="card-body p-4">
                                 <div class="text-center">
