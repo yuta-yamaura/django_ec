@@ -29,7 +29,7 @@ environ.Env.read_env(env_file=str(BASE_DIR) + "/.env")
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = env("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['.herokuapp.com','localhost']
 CSRF_TRUSTED_ORIGINS = ['https://*.herokuapp.com']
@@ -141,26 +141,26 @@ LOGIN_URL = 'login/'
 LOGIN_REDIRECT_URL = 'accounts/profile/'
 LOGOUT_REDIRECT_URL = '/'
 
-# try:
-#     from settings import *
-# except ImportError:
-#     pass
+try:
+    from settings import *
+except ImportError:
+    pass
 
-# if not DEBUG:
+if not DEBUG:
 
-#     #追加
-#     AWS_ACCESS_KEY_ID = os.environ['AWS_ACCESS_KEY_ID']
-#     AWS_SECRET_ACCESS_KEY = os.environ['AWS_SECRET_ACCESS_KEY']
-#     AWS_STORAGE_BUCKET_NAME = os.environ['AWS_STORAGE_BUCKET_NAME']
+    #追加
+    AWS_ACCESS_KEY_ID = os.environ['AWS_ACCESS_KEY_ID']
+    AWS_SECRET_ACCESS_KEY = os.environ['AWS_SECRET_ACCESS_KEY']
+    AWS_STORAGE_BUCKET_NAME = os.environ['AWS_STORAGE_BUCKET_NAME']
 
-#     DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-#     S3_URL = 'http://%s.s3.amazonaws.com/' % AWS_STORAGE_BUCKET_NAME
-#     MEDIA_URL = S3_URL
+    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+    S3_URL = 'http://%s.s3.amazonaws.com/' % AWS_STORAGE_BUCKET_NAME
+    MEDIA_URL = S3_URL
 
-#     AWS_S3_FILE_OVERWRITE = False
-#     AWS_DEFAULT_ACL = None
+    AWS_S3_FILE_OVERWRITE = False
+    AWS_DEFAULT_ACL = None
 
-#     import django_heroku
-#     django_heroku.settings(locals())
+    import django_heroku
+    django_heroku.settings(locals())
     
-# DEBUG = True
+DEBUG = True
