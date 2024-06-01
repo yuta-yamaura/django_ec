@@ -11,8 +11,6 @@
 
     <link rel="canonical" href="https://getbootstrap.com/docs/5.3/examples/checkout/">
 
-    
-
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3">
 
     <style>
@@ -103,6 +101,11 @@
     {% endblock customcss %}
   </head>
   <body class="bg-body-tertiary">
+    <header>
+      {% block header %}
+      {% include 'header.html' %}
+      {% endblock %}
+    </header>
     <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
       <symbol id="check2" viewBox="0 0 16 16">
         <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"/>
@@ -158,15 +161,14 @@
 <div class="container">
   <main>
     <div class="py-5 text-center">
-      <img class="d-block mx-auto mb-4" src="../assets/brand/bootstrap-logo.svg" alt="" width="72" height="57">
-      <h2>Checkout form</h2>
-      <p class="lead">Below is an example form built entirely with Bootstrap’s form controls. Each required form group has a validation state that can be triggered by attempting to submit the form without completing it.</p>
+      <h2>購入手続き画面</h2>
+      <p class="lead"></p>
     </div>
 
     <div class="row g-5">
       <div class="col-md-5 col-lg-4 order-md-last">
         <h4 class="d-flex justify-content-between align-items-center mb-3">
-          <span class="text-primary">Your cart</span>
+          <span class="text-primary">カート内の商品</span>
           <span class="badge bg-primary rounded-pill">{{ total_quantity }}</span>
         </h4>
         <ul class="list-group mb-3">
@@ -179,7 +181,7 @@
                   <small class="text-body-secondary">Brief description</small>
                 </div>
                 <span class="text-body-secondary">¥{{ product.price }}</span>
-                <span class="text-body-secondary">{{ product.quantity }}匹</span>
+                <span class="text-body-secondary">{{ product.quantity }}個</span>
                 <span class="text-body-secondary">¥{{ product.subtotal }}</span>
                 <div><a class="del-cart" href="/cart/remove/{{ product.pk }}/">削除</a></div>
               </li>
@@ -207,99 +209,52 @@
         </form>
       </div>
       <div class="col-md-7 col-lg-8">
-        <h4 class="mb-3">Billing address</h4>
+        <h4 class="mb-3">請求先住所</h4>
         <form class="needs-validation" novalidate>
           <div class="row g-3">
             <div class="col-sm-6">
-              <label for="firstName" class="form-label">First name</label>
-              <input type="text" class="form-control" id="firstName" placeholder="" value="" required>
+              <label for="firstName" class="form-label">姓</label>
+              <input type="text" class="form-control" id="firstName" placeholder="鈴木" value="" required>
               <div class="invalid-feedback">
-                Valid first name is required.
               </div>
             </div>
 
             <div class="col-sm-6">
-              <label for="lastName" class="form-label">Last name</label>
-              <input type="text" class="form-control" id="lastName" placeholder="" value="" required>
+              <label for="lastName" class="form-label">名</label>
+              <input type="text" class="form-control" id="lastName" placeholder="太郎" value="" required>
               <div class="invalid-feedback">
-                Valid last name is required.
               </div>
             </div>
 
             <div class="col-12">
-              <label for="username" class="form-label">Username</label>
+              <label for="username" class="form-label">ユーザ名</label>
               <div class="input-group has-validation">
                 <span class="input-group-text">@</span>
                 <input type="text" class="form-control" id="username" placeholder="Username" required>
               <div class="invalid-feedback">
-                  Your username is required.
+                  suzuki
                 </div>
               </div>
             </div>
 
             <div class="col-12">
-              <label for="email" class="form-label">Email <span class="text-body-secondary">(Optional)</span></label>
-              <input type="email" class="form-control" id="email" placeholder="you@example.com">
+              <label for="email" class="form-label">メールアドレス <span class="text-body-secondary">(Optional)</span></label>
+              <input type="email" class="form-control" id="email" placeholder="suzuki-taro@example.com">
               <div class="invalid-feedback">
-                Please enter a valid email address for shipping updates.
               </div>
             </div>
 
             <div class="col-12">
-              <label for="address" class="form-label">Address</label>
-              <input type="text" class="form-control" id="address" placeholder="1234 Main St" required>
+              <label for="address" class="form-label">住所１</label>
+              <input type="text" class="form-control" id="address" placeholder="東京都港区" required>
               <div class="invalid-feedback">
-                Please enter your shipping address.
               </div>
             </div>
 
             <div class="col-12">
-              <label for="address2" class="form-label">Address 2 <span class="text-body-secondary">(Optional)</span></label>
-              <input type="text" class="form-control" id="address2" placeholder="Apartment or suite">
+              <label for="address2" class="form-label">住所２ <span class="text-body-secondary">(Optional)</span></label>
+              <input type="text" class="form-control" id="address2" placeholder="南麻布1-1-1 麻布ハイツ202">
             </div>
-
-            <div class="col-md-5">
-              <label for="country" class="form-label">Country</label>
-              <select class="form-select" id="country" required>
-                <option value="">Choose...</option>
-                <option>United States</option>
-              </select>
-              <div class="invalid-feedback">
-                Please select a valid country.
-              </div>
-            </div>
-
-            <div class="col-md-4">
-              <label for="state" class="form-label">State</label>
-              <select class="form-select" id="state" required>
-                <option value="">Choose...</option>
-                <option>California</option>
-              </select>
-              <div class="invalid-feedback">
-                Please provide a valid state.
-              </div>
-            </div>
-
-            <div class="col-md-3">
-              <label for="zip" class="form-label">Zip</label>
-              <input type="text" class="form-control" id="zip" placeholder="" required>
-              <div class="invalid-feedback">
-                Zip code required.
-              </div>
-            </div>
-          </div>
-
-          <hr class="my-4">
-
-          <div class="form-check">
-            <input type="checkbox" class="form-check-input" id="same-address">
-            <label class="form-check-label" for="same-address">Shipping address is the same as my billing address</label>
-          </div>
-
-          <div class="form-check">
-            <input type="checkbox" class="form-check-input" id="save-info">
-            <label class="form-check-label" for="save-info">Save this information for next time</label>
-          </div>
 
           <hr class="my-4">
 
