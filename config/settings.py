@@ -28,9 +28,6 @@ environ.Env.read_env(env_file=str(BASE_DIR) + "/.env")
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = env("SECRET_KEY")
-AWS_ACCESS_KEY_ID = env("SECRET_KEY")
-AWS_SECRET_ACCESS_KEY = env("AWS_STORAGE_BUCKET_NAME")
-AWS_STORAGE_BUCKET_NAME = env("AWS_STORAGE_BUCKET_NAME")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
@@ -49,7 +46,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sites',
     'ec.apps.EcConfig',
-    'storages', #追加
+    'storages', #S3用に追加
 ]
 
 MIDDLEWARE = [
@@ -145,7 +142,7 @@ LOGIN_REDIRECT_URL = 'accounts/profile/'
 LOGOUT_REDIRECT_URL = '/'
 
 try:
-    from settings import *
+    from .local_settings import *
 except ImportError:
     pass
 
