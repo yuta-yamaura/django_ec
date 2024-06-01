@@ -4342,16 +4342,14 @@ textarea.form-control-lg {
   }
 }
 
-img,
+/* img,
 .card-img-top,
 #card-img-top {
   max-width: 100%;
   height: auto;
-}
+} */
 
-.hoge,
-#hoge {
-  width: 100%;
+.hoge {
   height: 223px;
 }
 
