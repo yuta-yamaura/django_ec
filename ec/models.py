@@ -9,6 +9,7 @@ class BaseMeta(models.Model):
   class Meta:
      abstract = True
 
+
 class ProductModel(BaseMeta):
     image = models.ImageField(upload_to='')
     name = models.CharField(max_length=20)
@@ -17,3 +18,6 @@ class ProductModel(BaseMeta):
 
     class Meta:
        db_table = 'Ec_ProductModel'
+    
+    def __str__(self):
+      return self.name

@@ -40,7 +40,7 @@
                             </div>
                             <!-- Product actions-->
                             <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-                                <form action="/cart/add/" method="POST" class="btn">
+                                <form action="/cart/add/list/" method="POST" class="btn">
                                     {% csrf_token %}
                                     <input type="hidden" name="quantity" value="1"/>
                                         <input type="hidden" name="item_pk" value="{{product.pk}}">
