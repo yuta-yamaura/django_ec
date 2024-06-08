@@ -25,7 +25,7 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('hello/', TemplateView.as_view(template_name='hello.html')),
-    path('list/', views.ProductListView.as_view()), # 商品一覧ページ
+    path('list/', views.ProductListView.as_view(), name='list'), # 商品一覧ページ
     path('detail/<int:pk>/', views.ProductDetailView.as_view(), name='detail'), # 詳細ページ
     path('cart/add/detail/', views.DetailAddCartView.as_view(),), # カート追加
     path('cart/', views.CartListView.as_view()), # カートページ

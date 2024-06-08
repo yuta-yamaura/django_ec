@@ -1,9 +1,9 @@
-from .models import ProductModel
-from django.views.generic import ListView, DetailView, View
+from .models import ProductModel, OrderdModel
+from django.views.generic import ListView, DetailView, View, CreateView
 from collections import OrderedDict
 from config.templates import *
 from django.shortcuts import redirect
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 
 # Create your views here.
 
@@ -104,3 +104,4 @@ def remove_from_cart(request, pk):
         del cart['items'][pk]
         request.session['cart'] = cart
     return redirect('/cart/')
+
