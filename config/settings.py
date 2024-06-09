@@ -29,7 +29,6 @@ environ.Env.read_env(env_file=str(BASE_DIR) + "/.env")
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = env("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
 
 ALLOWED_HOSTS = ['.herokuapp.com','localhost']
 CSRF_TRUSTED_ORIGINS = ['https://*.herokuapp.com']
