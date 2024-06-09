@@ -21,3 +21,19 @@ class ProductModel(BaseMeta):
     
     def __str__(self):
       return self.name
+
+
+class OrderdModel(BaseMeta):
+    lastname = models.CharField(max_length=10)
+    firstname = models.CharField(max_length=10)
+    username = models.CharField(max_length=20)
+    email = models.EmailField(max_length=255)
+    address1 = models.CharField(max_length=50)
+    address2 = models.CharField(max_length=50)
+    holder = models.CharField(max_length=20)
+    credit_card_number = models.IntegerField()
+    date_of_expiry = models.DateField(auto_now=False)
+    security_code = models.IntegerField()
+
+    class Meta:
+       db_table = 'Ec_OrderdModel'
