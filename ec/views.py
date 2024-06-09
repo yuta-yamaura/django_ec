@@ -109,5 +109,5 @@ def remove_from_cart(request, pk):
 class CheckOut(CreateView):
     template_name = 'cart.html'
     model = OrderdModel
-    fields = ('')
+    fields = ('lastname', 'firstname', 'username', 'email', 'address1', 'address2', 'holder',  'credit_card_number', 'date_of_expiry', 'security_code')
     success_url = reverse_lazy('list')
