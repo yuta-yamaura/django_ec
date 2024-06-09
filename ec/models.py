@@ -23,6 +23,16 @@ class ProductModel(BaseMeta):
       return self.name
 
 
+class CartModel(BaseMeta):
+    cart_id = models.BigAutoField(primary_key=True)
+
+
+class CartItemModel(BaseMeta):
+    name = models.ForeignKey(ProductModel, on_delete=models.CASCADE)
+    quantity = models.IntegerField(default=1)
+    cart_id = models.ForeignKey(CartModel, on_delete=models.CASCADE)
+
+
 class OrderdModel(BaseMeta):
     lastname = models.CharField(max_length=10)
     firstname = models.CharField(max_length=10)
