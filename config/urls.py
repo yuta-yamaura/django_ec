@@ -31,6 +31,7 @@ urlpatterns = [
     path('cart/', views.CartListView.as_view()), # カートページ
     path('cart/add/list/', views.ListAddCartView.as_view()), # カート追加
     path('cart/remove/<str:pk>/', views.remove_from_cart), # カート削除
+    path('cart/checkout/', views.CheckoutView.as_view()), # チェックアウト
     path('', views.ProductListView.as_view()),# herokuにデプロイする際のpath
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) \
   + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

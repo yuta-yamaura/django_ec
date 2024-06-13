@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'ec.apps.EcConfig',
     'storages', #S3用に追加
+    'crispy_forms', #チェックアウト用フォームに追加
 ]
 
 MIDDLEWARE = [

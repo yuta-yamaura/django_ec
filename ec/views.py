@@ -1,9 +1,12 @@
+from django.forms import BaseModelForm
+from django.http import HttpResponse
 from .models import ProductModel, OrderdModel
 from django.views.generic import ListView, DetailView, View, CreateView
 from collections import OrderedDict
 from config.templates import *
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
 from django.urls import reverse, reverse_lazy
+from .forms import OrderdModelForm
 
 # Create your views here.
 
@@ -106,8 +109,11 @@ def remove_from_cart(request, pk):
     return redirect('/cart/')
 
 
-class CheckOut(CreateView):
+class CheckoutView(CreateView):
+    form_class = OrderdModelForm
     template_name = 'cart.html'
-    model = OrderdModel
-    fields = ('lastname', 'firstname', 'username', 'email', 'address1', 'address2', 'holder',  'credit_card_number', 'date_of_expiry', 'security_code')
     success_url = reverse_lazy('list')
+
+    def form_valid(self, form):
+        return super().form_valid(form)
+        
