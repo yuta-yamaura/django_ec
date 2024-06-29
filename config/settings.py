@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 import environ
 import os
 import dj_database_url
+from decouple import config
 
 from pathlib import Path
 
@@ -85,9 +86,20 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-DATABASES = {
-    "default": env.db(),
-}
+# 環境変数から DATABASE_URL を取得
+DATABASE_URL = config('DATABASE_URL', default='')
+
+# 開発環境と商用環境でデータベース設定を切り替える
+if DATABASE_URL:
+    # 開発環境
+    DATABASES = {
+        'default': dj_database_url.parse(DATABASE_URL, conn_max_age=500, ssl_require=False)
+    }
+else:
+    # 商用環境 (Heroku)
+    DATABASES = {
+        'default': dj_database_url.config(conn_max_age=500, ssl_require=True)
+    }
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
