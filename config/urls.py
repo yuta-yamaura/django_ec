@@ -21,6 +21,7 @@ from ec import views
 from django.urls import include, path
 from django.conf import settings
 from django.conf.urls.static import static
+from ec import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -34,3 +35,5 @@ urlpatterns = [
     path('', views.ProductListView.as_view()),# herokuにデプロイする際のpath
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) \
   + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
+handler500 = views.my_customized_server_error
