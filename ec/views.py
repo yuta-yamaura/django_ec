@@ -1,9 +1,9 @@
-from .models import ProductModel, OrderdModel
-from django.views.generic import ListView, DetailView, View, CreateView
-from collections import OrderedDict
+from .models import ProductModel, CartItemModel, CartModel
+from django.views.generic import ListView, DetailView
 from config.templates import *
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse, reverse_lazy
+from django.core.exceptions import ObjectDoesNotExist
 
 # Create your views here.
 
@@ -16,92 +16,90 @@ class ProductDetailView(DetailView):
     model = ProductModel
     template_name = 'detail.html'
 
+
 def redirect_site(request): # herokuデプロイ用
     return redirect('https://django2ec-d9aba89433ee.herokuapp.com/')
 
+
 class CartListView(ListView):
-    model = ProductModel
+    model = CartItemModel, CartModel
     template_name = 'cart.html'
- 
-    def get_queryset(self):
-        cart = self.request.session.get('cart', None)
-        if cart is None or len(cart) == 0:
-            return redirect('/')
-        self.queryset = []
-        self.total = 0
-        self.total_quantity = 0
-        for item_pk, quantity in cart['items'].items():
-            obj = ProductModel.objects.get(pk=item_pk)
-            obj.quantity = quantity
-            obj.subtotal = int(obj.price * quantity)
-            self.queryset.append(obj)
-            self.total += obj.subtotal
-            self.total_quantity += obj.quantity
-        cart['total'] = self.total
-        cart['total_quantity'] = self.total_quantity
-        self.request.session['cart'] = cart
-        return super().get_queryset()
- 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
+
+    def get(self, request):
         try:
-            context["total"] = self.total
-            context["total_quantity"] = self.total_quantity
-        except Exception:
-            pass
-        return context
+            cart_id = request.session.get('cart_id')
+            if cart_id:
+                cart = get_object_or_404(CartModel, cart_id=cart_id)
+            else:
+                cart = CartModel()
+                cart.save()
+                request.session['cart_id'] = cart.cart_id
+            cart_items = CartItemModel.objects.filter(cart_id=cart)
+            total_price = cart.get_total_price()
+            return render(request, 'cart.html', {'cart': cart, 'cart_items':cart_items, 'total_price': total_price})
+        except ObjectDoesNotExist:
+            return render(request, 'cart.html', {'cart': None, 'cart_items':[], 'total_price': 0})
 
- 
-class ListAddCartView(View):
- 
-    def post(self, request):
-        item_pk = request.POST.get('item_pk')
-        quantity = int(request.POST.get('quantity'))
-        cart = request.session.get('cart', None)
-        if cart is None or len(cart) == 0:
-            items = OrderedDict()
-            cart = {'items': items}
-        if item_pk in cart['items']:
-            cart['items'][item_pk] += quantity
+
+def list_add_item(request):
+    item_pk = request.POST.get('item_pk')
+    item = get_object_or_404(ProductModel, pk=item_pk)
+    quantity = int(request.POST.get('quantity'))
+    cart_id = request.session.get('cart_id', None)
+    
+    if cart_id is None:
+        cart = CartModel.objects.create()
+        request.session['cart_id'] = cart.cart_id
+    else:
+        cart = get_object_or_404(CartModel, cart_id=cart_id)
+
+    order = CartItemModel.objects.all()
+    if order.exists():
+        order_item = CartItemModel.objects.filter(name_id=item_pk).first()
+        if not order_item:
+            order = CartItemModel.objects.create(name=item, quantity=1, cart_id=cart)
         else:
-            cart['items'][item_pk] = quantity
-        request.session['cart'] = cart
-        self.total_quantity = 0
-        for item_pk, quantity in cart['items'].items():
-            obj = ProductModel.objects.get(pk=item_pk)
-            obj.quantity = quantity
-            self.total_quantity += obj.quantity
-            cart['total_quantity'] = self.total_quantity
-        return redirect('/list/')
+            order_item.quantity += 1
+            order_item.save()
+    else:
+        name, created = CartItemModel.objects.get_or_create(
+            name = item,
+            cart_id = cart,
+            quantity = quantity
+)
+    return redirect('/list/')
 
 
-class DetailAddCartView(ListAddCartView):
- 
-    def post(self, request, *args, **kwargs):
-        item_pk = request.POST.get('item_pk')
-        quantity = int(request.POST.get('quantity'))
-        cart = request.session.get('cart', None)
-        if cart is None or len(cart) == 0:
-            items = OrderedDict()
-            cart = {'items': items}
-        if item_pk in cart['items']:
-            cart['items'][item_pk] += quantity
+def detail_add_item(request):
+    item_pk = request.POST.get('item_pk')
+    item = get_object_or_404(ProductModel, pk=item_pk)
+    quantity = int(request.POST.get('quantity'))
+    cart_id = request.session.get('cart_id')
+    
+    if not cart_id:
+        cart = CartModel.objects.create()
+        request.session['cart_id'] = cart.cart_id
+    else:
+        cart = get_object_or_404(CartModel, cart_id=cart_id)
+
+    order = CartItemModel.objects.all()
+    if order.exists():
+        order_item = CartItemModel.objects.filter(name_id=item_pk).first()
+        if not order_item:
+            order = CartItemModel.objects.create(name=item, quantity=quantity, cart_id=cart)
         else:
-            cart['items'][item_pk] = quantity
-        request.session['cart'] = cart
-        self.total_quantity = 0
-        for item_pk, quantity in cart['items'].items():
-            obj = ProductModel.objects.get(pk=item_pk)
-            obj.quantity = quantity
-            self.total_quantity += obj.quantity
-            cart['total_quantity'] = self.total_quantity
-        return redirect(reverse('detail', kwargs={'pk': item_pk}))
+            order_item.quantity += quantity
+            order_item.save()
+    else:
+        name, created = CartItemModel.objects.get_or_create(
+            name = item,
+            cart_id = cart,
+            quantity = quantity
+)
+    return redirect(reverse('detail', kwargs={'pk': item_pk}))
 
- 
+
 def remove_from_cart(request, pk):
-    cart = request.session.get('cart', None)
-    if cart is not None:
-        del cart['items'][pk]
-        request.session['cart'] = cart
+    order_item = get_object_or_404(CartItemModel, pk=pk)
+    order_item.delete()
     return redirect('/cart/')
-
