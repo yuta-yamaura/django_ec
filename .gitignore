@@ -6,3 +6,7 @@ venv
 python-getting-started
 local_settings.py
 .DS_Store
+.devcontainer/
+.github/
+.vscode/
+ec/django_ec.code-workspace
