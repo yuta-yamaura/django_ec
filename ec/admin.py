@@ -13,17 +13,18 @@ admin.site.register(ProductModel, ProductModeladmin)
 
 
 class CartItemModeladmin(admin.ModelAdmin):
-    pass
-    # list_editable = ('name', 'quantity', 'cart_id')
-    # fields = ('name', 'quantity', 'cart_id')
-    # list_display = ('name', 'quantity', 'cart_id')
-    # list_display_links = None
+    list_editable = ('name', 'quantity', 'cart_id')
+    fields = ('name', 'quantity', 'cart_id')
+    list_display = ('name', 'quantity', 'cart_id')
+    list_display_links = None
 
 admin.site.register(CartItemModel, CartItemModeladmin)
 
 
 class CartModeladmin(admin.ModelAdmin):
-    pass
+    fields = ('cart_id',)
+    list_display = ('cart_id',)
+    list_display_links = None
 
 admin.site.register(CartModel, CartModeladmin)
 

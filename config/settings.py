@@ -11,8 +11,8 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 import environ
-import dj_database_url
 import os
+import dj_database_url
 
 from pathlib import Path
 
@@ -29,6 +29,7 @@ environ.Env.read_env(env_file=str(BASE_DIR) + "/.env")
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = env("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = bool(int(os.environ.get('DEBUG', default=0)))
 
 ALLOWED_HOSTS = ['.herokuapp.com','localhost']
 CSRF_TRUSTED_ORIGINS = ['https://*.herokuapp.com']
@@ -85,7 +86,7 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
-    "default": dj_database_url.config(default=env('DATABASE_URL')),
+    "default": env.db(),
 }
 
 # Password validation
@@ -161,5 +162,3 @@ if not DEBUG:
 
     import django_heroku
     django_heroku.settings(locals())
-    
-DEBUG = True

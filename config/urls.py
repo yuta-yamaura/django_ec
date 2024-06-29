@@ -27,9 +27,9 @@ urlpatterns = [
     path('hello/', TemplateView.as_view(template_name='hello.html')),
     path('list/', views.ProductListView.as_view(), name='list'), # 商品一覧ページ
     path('detail/<int:pk>/', views.ProductDetailView.as_view(), name='detail'), # 詳細ページ
-    path('cart/add/detail/', views.DetailAddCartView.as_view(),), # カート追加
     path('cart/', views.CartListView.as_view()), # カートページ
-    path('cart/add/list/', views.ListAddCartView.as_view()), # カート追加
+    path('cart/add/list/', views.list_add_item), # カート追加
+    path('cart/add/detail/', views.detail_add_item), # カート追加
     path('cart/remove/<str:pk>/', views.remove_from_cart), # カート削除
     path('', views.ProductListView.as_view()),# herokuにデプロイする際のpath
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) \

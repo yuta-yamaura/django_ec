@@ -84,21 +84,25 @@
       <div class="col-md-5 col-lg-4 order-md-last">
         <h4 class="d-flex justify-content-between align-items-center mb-3">
           <span class="text-primary">カート内の商品</span>
-          <span class="badge bg-primary rounded-pill">{{ total_quantity }}</span>
+          <span class="badge bg-primary rounded-pill">{{ get_total_quantity }}</span>
         </h4>
         <ul class="list-group mb-3">
-          {% for order_item in object_list %}
+          {% for cart_item in cart_items %}
           <tr>
             <td>
               <li class="list-group-item d-flex justify-content-between row g-1 border">
-                <div><h6 class="my-0">{{ order_item.name }}</h6></div>
+                <div><h6 class="my-0">{{ cart_item.name }}</h6></div>
                   <small class="text-body-secondary"></small>
                 <div>
-                  <span class="text-body-secondary mx-2">¥{{ order_item.price }}</span>
-                  <span class="text-body-secondary mx-3">{{ order_item.quantity }}個</span>
-                  <span class="text-body-secondary mx-4">小計 ¥{{ order_item.subtotal }}</span>
+                  <span class="text-body-secondary mx-2">¥{{ cart_item.name.price }}</span>
+                  <span class="text-body-secondary mx-3">{{ cart_item.quantity }}個</span>
+                  <span class="text-body-secondary mx-4">小計 ¥{{ cart_item.get_sub_total_price }}</span>
                 </div>
-                <div><a class="del-cart border border-secondary border-3 rounded form-control-sm" href="/cart/remove/{{ order_item.pk }}/">削除</a></div>
+                <form action="/cart/remove/{{ cart_item.pk }}" method="POST" class="">
+                  {% csrf_token %}
+                  <input type="hidden" name="item_pk" value="{{ cart_item.pk }}">
+                  <div><a class="del-cart border border-secondary border-3 rounded form-control-sm" href="/cart/remove/{{ cart_item.pk }}/">削除</a></div>
+                </form>
               </li>
             </td>
           </tr>
@@ -112,7 +116,7 @@
           </li>
           <li class="list-group-item d-flex justify-content-between lh-sm row g-1 border">
             <span>合計金額</span>
-            <strong>¥{{ total }}</strong>
+              <strong>¥{{ total_price }}</strong>
           </li>
         </ul>
 
