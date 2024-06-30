@@ -153,11 +153,6 @@ LOGIN_URL = 'login/'
 LOGIN_REDIRECT_URL = 'accounts/profile/'
 LOGOUT_REDIRECT_URL = '/'
 
-try:
-    from .local_settings import *
-except ImportError:
-    pass
-
 if not DEBUG:
 
     #追加
