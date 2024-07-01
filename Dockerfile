@@ -4,6 +4,4 @@ WORKDIR /code
 COPY requirements.txt /code/
 RUN pip install -r requirements.txt
 COPY . /code/
-RUN mkdir -p /static/prd/ \
-    && python3 manage.py collectstatic --no-input
 CMD gunicorn config.wsgi --log-file -
