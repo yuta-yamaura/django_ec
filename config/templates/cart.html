@@ -11,10 +11,8 @@
     <!-- Custom styles for this template -->
     {% load static %}
     {% block customcss %}
-    <link href="{% static 'css/checkout.css' %}" rel="stylesheet">
     <link href="{% static 'assets/dist/css/bootstrap.min.css' %}" rel="stylesheet">
     {% endblock customcss %}
-    {% load crispy_forms_tags %}
   </head>
   <body class="bg-body-tertiary">
     <header>
@@ -38,41 +36,6 @@
       </symbol>
     </svg>
 
-    <div class="dropdown position-fixed bottom-0 end-0 mb-3 me-3 bd-mode-toggle">
-      <button class="btn btn-bd-primary py-2 dropdown-toggle d-flex align-items-center"
-              id="bd-theme"
-              type="button"
-              aria-expanded="false"
-              data-bs-toggle="dropdown"
-              aria-label="Toggle theme (auto)">
-        <svg class="bi my-1 theme-icon-active" width="1em" height="1em"><use href="#circle-half"></use></svg>
-        <span class="visually-hidden" id="bd-theme-text">Toggle theme</span>
-      </button>
-      <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="bd-theme-text">
-        <li>
-          <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="light" aria-pressed="false">
-            <svg class="bi me-2 opacity-50" width="1em" height="1em"><use href="#sun-fill"></use></svg>
-            Light
-            <svg class="bi ms-auto d-none" width="1em" height="1em"><use href="#check2"></use></svg>
-          </button>
-        </li>
-        <li>
-          <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="dark" aria-pressed="false">
-            <svg class="bi me-2 opacity-50" width="1em" height="1em"><use href="#moon-stars-fill"></use></svg>
-            Dark
-            <svg class="bi ms-auto d-none" width="1em" height="1em"><use href="#check2"></use></svg>
-          </button>
-        </li>
-        <li>
-          <button type="button" class="dropdown-item d-flex align-items-center active" data-bs-theme-value="auto" aria-pressed="true">
-            <svg class="bi me-2 opacity-50" width="1em" height="1em"><use href="#circle-half"></use></svg>
-            Auto
-            <svg class="bi ms-auto d-none" width="1em" height="1em"><use href="#check2"></use></svg>
-          </button>
-        </li>
-      </ul>
-    </div>
-
     
 <div class="container">
   <main>
@@ -85,21 +48,25 @@
       <div class="col-md-5 col-lg-4 order-md-last">
         <h4 class="d-flex justify-content-between align-items-center mb-3">
           <span class="text-primary">カート内の商品</span>
-          <span class="badge bg-primary rounded-pill">{{ total_quantity }}</span>
+          <span class="badge bg-primary rounded-pill">{{ get_total_quantity }}</span>
         </h4>
         <ul class="list-group mb-3">
-          {% for order_item in object_list %}
+          {% for cart_item in cart_items %}
           <tr>
             <td>
               <li class="list-group-item d-flex justify-content-between row g-1 border">
-                <div><h6 class="my-0">{{ order_item.name }}</h6></div>
+                <div><h6 class="my-0">{{ cart_item.name }}</h6></div>
                   <small class="text-body-secondary"></small>
                 <div>
-                  <span class="text-body-secondary mx-2">¥{{ order_item.price }}</span>
-                  <span class="text-body-secondary mx-3">{{ order_item.quantity }}個</span>
-                  <span class="text-body-secondary mx-4">小計 ¥{{ order_item.subtotal }}</span>
+                  <span class="text-body-secondary mx-2">¥{{ cart_item.name.price }}</span>
+                  <span class="text-body-secondary mx-3">{{ cart_item.quantity }}個</span>
+                  <span class="text-body-secondary mx-4">小計 ¥{{ cart_item.get_sub_total_price }}</span>
                 </div>
-                <div><a class="del-cart border border-secondary border-3 rounded form-control-sm" href="/cart/remove/{{ order_item.pk }}/">削除</a></div>
+                <form action="/cart/remove/{{ cart_item.pk }}" method="POST" class="">
+                  {% csrf_token %}
+                  <input type="hidden" name="item_pk" value="{{ cart_item.pk }}">
+                  <div><a class="del-cart border border-secondary border-3 rounded form-control-sm" href="/cart/remove/{{ cart_item.pk }}/">削除</a></div>
+                </form>
               </li>
             </td>
           </tr>
@@ -113,7 +80,7 @@
           </li>
           <li class="list-group-item d-flex justify-content-between lh-sm row g-1 border">
             <span>合計金額</span>
-            <strong>¥{{ total }}</strong>
+              <strong>¥{{ total_price }}</strong>
           </li>
         </ul>
 
@@ -131,11 +98,11 @@
           <div class="row g-3">
             <div class="col-sm-6">
               <label for="firstName" class="form-label">姓</label>
-              {{ form.lastname }}
+              <input type="text" class="form-control" id="firstName" placeholder="鈴木" value="" required>
               <div class="invalid-feedback">
               </div>
             </div>
-          
+
             <div class="col-sm-6">
               <label for="lastName" class="form-label">名</label>
               <input type="text" class="form-control" id="lastName" placeholder="太郎" value="" required>
@@ -214,9 +181,7 @@
 
           <hr class="my-4">
 
-          <a href="/list/">
-            <button class="w-100 btn btn-primary btn-lg" type="submit">購入する</button>
-          </a>
+          <button class="w-100 btn btn-primary btn-lg" type="submit">購入する</button>
         </form>
       </div>
     </div>
@@ -233,7 +198,6 @@
 </div>
 <script src="../assets/dist/js/bootstrap.bundle.min.js"></script>
     {% block customjs %}
-    <script src="{% static 'css/checkout.js' %}"></script></body>
+    <script src="{% static 'js/checkout.js' %}"></script></body>
     {% endblock customjs %}
 </html>
-

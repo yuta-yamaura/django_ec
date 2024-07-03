@@ -1,3 +1,5 @@
+{% load cart_tags %}
+
 <!DOCTYPE html>
 <html lang="en">
     <!-- Navigation-->
@@ -23,11 +25,11 @@
                     <button class="btn btn-outline-dark" type="submit">
                         <i class="bi-cart-fill me-1"></i>
                         <a class="cart-logo" href="/cart/">Cart</a>
+                        {% if request.session.cart_id %}
                         <span class="badge bg-dark text-white ms-1 rounded-pill">
-                            {% if request.session.cart and request.session.cart.total_quantity != 0 %}
-                            {{request.session.cart.total_quantity}}
-                            {% endif %}
+                            {{ request|item_count }}
                         </span>
+                        {% endif %}
                     </button>
                 </form>
             </div>
