@@ -44,9 +44,10 @@
                                     {% csrf_token %}
                                     <input type="hidden" name="quantity" value="1"/>
                                         <input type="hidden" name="item_pk" value="{{product.pk}}">
-                                            <button type="submit" class="btn">
-                                                <div class="text-center"><a class="btn btn-outline-dark mt-auto">Add to cart</a></div>
-                                            </button>
+                                            <input type="hidden" name="name" value="{{product.name}}">
+                                                <button type="submit" class="btn">
+                                                    <div class="text-center"><a class="btn btn-outline-dark mt-auto">Add to cart</a></div>
+                                                </button>
                                 </form>
                             </div>
                         </div>
