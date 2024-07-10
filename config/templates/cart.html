@@ -11,7 +11,7 @@
     <!-- Custom styles for this template -->
     {% load static %}
     {% block customcss %}
-    <link href="{% static 'assets/dist/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/dist/css/bootstrap.min.css/' %}" rel="stylesheet">
     {% endblock customcss %}
   </head>
   <body class="bg-body-tertiary">
@@ -98,14 +98,14 @@
           <div class="row g-3">
             <div class="col-sm-6">
               <label for="firstName" class="form-label">姓</label>
-              <input type="text" class="form-control" id="firstName" placeholder="鈴木" value="" required>
+              <input type="text" class="form-control" id="firstName" placeholder="鈴木" value="" name="lastname" required>
               <div class="invalid-feedback">
               </div>
             </div>
 
             <div class="col-sm-6">
               <label for="lastName" class="form-label">名</label>
-              <input type="text" class="form-control" id="lastName" placeholder="太郎" value="" required>
+              <input type="text" class="form-control" id="lastName" placeholder="太郎" value="" name="firstname" required>
               <div class="invalid-feedback">
               </div>
             </div>
@@ -114,7 +114,7 @@
               <label for="username" class="form-label">ユーザ名</label>
               <div class="input-group has-validation">
                 <span class="input-group-text">@</span>
-                <input type="text" class="form-control" id="username" placeholder="Username" required>
+                <input type="text" class="form-control" id="username" placeholder="Username" name="username" required>
               <div class="invalid-feedback">
                   suzuki
                 </div>
@@ -123,22 +123,23 @@
 
             <div class="col-12">
               <label for="email" class="form-label">メールアドレス <span class="text-body-secondary">(Optional)</span></label>
-              <input type="email" class="form-control" id="email" placeholder="suzuki-taro@example.com">
+              <input type="email" class="form-control" id="email" name="email" placeholder="suzuki-taro@example.com">
               <div class="invalid-feedback">
               </div>
             </div>
 
             <div class="col-12">
               <label for="address" class="form-label">住所１</label>
-              <input type="text" class="form-control" id="address" placeholder="東京都港区" required>
+              <input type="text" class="form-control" id="address" placeholder="東京都港区" name="address1" required>
               <div class="invalid-feedback">
               </div>
             </div>
 
             <div class="col-12">
               <label for="address2" class="form-label">住所２ <span class="text-body-secondary">(Optional)</span></label>
-              <input type="text" class="form-control" id="address2" placeholder="南麻布1-1-1 麻布ハイツ202">
+              <input type="text" class="form-control" id="address2" placeholder="南麻布1-1-1 麻布ハイツ202" name="address2" >
             </div>
+          </div>
 
           <hr class="my-4">
 
@@ -147,7 +148,7 @@
           <div class="row gy-3">
             <div class="col-md-6">
               <label for="cc-name" class="form-label">名義人</label>
-              <input type="text" class="form-control" id="cc-name" placeholder="" required>
+              <input type="text" class="form-control" id="cc-name" placeholder="" name="holder" required>
               <small class="text-body-secondary">カードに記載されたご自身のお名前</small>
               <div class="invalid-feedback">
                 Name on card is required
@@ -156,7 +157,7 @@
 
             <div class="col-md-6">
               <label for="cc-number" class="form-label">カード番号</label>
-              <input type="text" class="form-control" id="cc-number" placeholder="" required>
+              <input type="text" class="form-control" id="cc-number" placeholder="" name="credit_card_number" required>
               <div class="invalid-feedback">
                 Credit card number is required
               </div>
@@ -164,7 +165,7 @@
 
             <div class="col-md-3">
               <label for="cc-expiration" class="form-label">有効期限</label>
-              <input type="text" class="form-control" id="cc-expiration" placeholder="" required>
+              <input type="text" class="form-control" id="cc-expiration" placeholder="" name="date_of_expiry" required>
               <div class="invalid-feedback">
                 Expiration date required
               </div>
@@ -172,10 +173,15 @@
 
             <div class="col-md-3">
               <label for="cc-cvv" class="form-label">セキュリティコード</label>
-              <input type="text" class="form-control" id="cc-cvv" placeholder="" required>
+              <input type="text" class="form-control" id="cc-cvv" placeholder="" name="security_code" required>
               <div class="invalid-feedback">
                 Security code required
               </div>
+            </div>
+
+            <div class="col-md-3">
+              <label for="cc-cvv" class="form-label"></label>
+              <input type="hidden" class="form-control" placeholder="" name="cart_id" value="{{ cart.cart_id }}" required>
             </div>
           </div>
 
@@ -198,6 +204,6 @@
 </div>
 <script src="../assets/dist/js/bootstrap.bundle.min.js"></script>
     {% block customjs %}
-    <script src="{% static 'js/checkout.js' %}"></script></body>
+    <script src="{% static 'js/checkout.js/' %}"></script></body>
     {% endblock customjs %}
 </html>
