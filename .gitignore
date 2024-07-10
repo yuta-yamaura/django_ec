@@ -5,3 +5,4 @@ __pycache__/
 venv
 python-getting-started
 local_settings.py
+.DS_Store
