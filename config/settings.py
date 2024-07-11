@@ -168,5 +168,6 @@ if not DEBUG:
     AWS_S3_FILE_OVERWRITE = False
     AWS_DEFAULT_ACL = None
 
+    SECRET_KEY = os.environ['SECRET_KEY']
     import django_heroku
     django_heroku.settings(locals())
