@@ -137,7 +137,7 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 STATIC_URL = 'static/'
 
@@ -187,3 +187,11 @@ LOGIN_REDIRECT_URL = '/'
 LOGOUT_URL = '/logout/'
 
 LOGOUT_REDIRECT_URL = '/login/'
+
+# メール設定
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'shk0fate@gmail.com'
+EMAIL_HOST_PASSWORD= 'mhwh jwhd abpl zyvn'
+EMAIL_PORT = 587

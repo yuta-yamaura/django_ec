@@ -17,6 +17,9 @@ from django.contrib.auth import get_user_model
 from ec.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
 import json
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
 
 # Create your views here.
 
@@ -147,6 +150,24 @@ class CheckOutView(LoginRequiredMixin, CreateView, SuccessMessageMixin):
         self.object.total_price = cart.get_total_price()
         self.object.save()
         cart_item.all().delete()
+
+        context = {
+            'items_data' : json.loads(items_data),
+            'total_price' : self.object.total_price,
+        }
+
+        email = self.request.POST['email']
+        # HTMLファイルを読み込む
+        html_content = render_to_string('mail.html', context)
+        # HTMLタグを取り除く
+        text_content = strip_tags(html_content)
+        send_mail(
+            subject="ご購入頂きありがとうございます。",
+            message=text_content,
+            from_email="from@example.com",
+            recipient_list=[email],
+            html_message=html_content,
+            )
 
         messages.success(self.request, "購入ありがとうございます")
         return super().form_valid(form)
