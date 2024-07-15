@@ -9,6 +9,7 @@ from django.urls import reverse, reverse_lazy
 from django.core.exceptions import ObjectDoesNotExist
 from django.views.decorators.csrf import requires_csrf_token
 from django.http import HttpResponse, HttpResponseServerError
+from ec.function import get_session
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -61,28 +62,26 @@ def list_add_item(request):
     item_pk = request.POST.get('item_pk')
     item = get_object_or_404(ProductModel, pk=item_pk)
     quantity = int(request.POST.get('quantity'))
-    cart_id = request.session.get('cart_id', None)
-    
-    if cart_id is None:
-        cart = CartModel.objects.create()
-        request.session['cart_id'] = cart.cart_id
-    else:
-        cart = get_object_or_404(CartModel, cart_id=cart_id)
+    cart = get_session(request)
 
     order = CartItemModel.objects.all()
     if order.exists():
         order_item = CartItemModel.objects.filter(name_id=item_pk).first()
         if not order_item:
-            order = CartItemModel.objects.create(name=item, quantity=1, cart_id=cart)
+            order, created = CartItemModel.objects.get_or_create(
+                name = item,
+                quantity = 1,
+                cart_id = cart
+                )
         else:
             order_item.quantity += 1
             order_item.save()
     else:
-        name, created = CartItemModel.objects.get_or_create(
+        order, created = CartItemModel.objects.get_or_create(
             name = item,
-            cart_id = cart,
-            quantity = quantity
-)
+            quantity = quantity,
+            cart_id = cart
+        )
     return redirect('/list/')
 
 @login_required
@@ -90,28 +89,26 @@ def detail_add_item(request):
     item_pk = request.POST.get('item_pk')
     item = get_object_or_404(ProductModel, pk=item_pk)
     quantity = int(request.POST.get('quantity'))
-    cart_id = request.session.get('cart_id')
-    
-    if not cart_id:
-        cart = CartModel.objects.create()
-        request.session['cart_id'] = cart.cart_id
-    else:
-        cart = get_object_or_404(CartModel, cart_id=cart_id)
+    cart = get_session(request)
 
     order = CartItemModel.objects.all()
     if order.exists():
         order_item = CartItemModel.objects.filter(name_id=item_pk).first()
         if not order_item:
-            order = CartItemModel.objects.create(name=item, quantity=quantity, cart_id=cart)
+            order, created = CartItemModel.objects.get_or_create(
+                name = item,
+                quantity = quantity,
+                cart_id = cart
+                )
         else:
             order_item.quantity += quantity
             order_item.save()
     else:
-        name, created = CartItemModel.objects.get_or_create(
+        order, created = CartItemModel.objects.get_or_create(
             name = item,
-            cart_id = cart,
-            quantity = quantity
-)
+            quantity = quantity,
+            cart_id = cart
+            )
     return redirect(reverse('detail', kwargs={'pk': item_pk}))
 
 @login_required
