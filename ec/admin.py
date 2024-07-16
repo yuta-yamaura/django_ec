@@ -22,8 +22,8 @@ admin.site.register(CartItemModel, CartItemModeladmin)
 
 
 class CartModeladmin(admin.ModelAdmin):
-    fields = ('cart',)
-    list_display = ('cart',)
+    fields = ('cart_id',)
+    list_display = ('cart_id',)
     list_display_links = None
 
 admin.site.register(CartModel, CartModeladmin)

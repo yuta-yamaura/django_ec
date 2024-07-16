@@ -24,10 +24,10 @@ class ProductModel(BaseMeta):
 
 
 class CartModel(BaseMeta):
-    cart = models.BigAutoField(primary_key=True)
+    cart_id = models.BigAutoField(primary_key=True)
 
     def __str__(self):
-      return str(self.cart)
+      return str(self.cart_id)
     
     def get_total_price(self):
       total_price = 0

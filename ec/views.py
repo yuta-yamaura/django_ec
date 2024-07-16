@@ -43,16 +43,19 @@ def list_add_item(request):
     item = get_object_or_404(ProductModel, pk=item_pk)
     quantity = int(request.POST.get('quantity'))
     cart = get_session(request)
+    print(cart)
+    print(type(cart))
 
     order = CartItemModel.objects.all()
     if order.exists():
-        order_item = CartItemModel.objects.filter(name_id=item_pk).first()
+        order_item = CartItemModel.objects.filter(product_id=item_pk).first()
         if not order_item:
             order, created = CartItemModel.objects.get_or_create(
                 product = item,
                 quantity = 1,
                 cart = cart
                 )
+            print(order)
         else:
             order_item.quantity += 1
             order_item.save()
@@ -73,7 +76,7 @@ def detail_add_item(request):
 
     order = CartItemModel.objects.all()
     if order.exists():
-        order_item = CartItemModel.objects.filter(name_id=item_pk).first()
+        order_item = CartItemModel.objects.filter(product_id=item_pk).first()
         if not order_item:
             order, created = CartItemModel.objects.get_or_create(
                 product = item,
