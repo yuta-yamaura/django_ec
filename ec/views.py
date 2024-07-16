@@ -6,7 +6,7 @@ from django.urls import reverse, reverse_lazy
 from django.core.exceptions import ObjectDoesNotExist
 from django.views.decorators.csrf import requires_csrf_token
 from django.http import HttpResponseServerError
-from ec.session import get_session
+from ec.function import get_session
 
 # Create your views here.
 
@@ -30,8 +30,14 @@ class CartListView(ListView):
 
     def get(self, request):
         try:
-            cart = get_session(request)
-            cart.cart_items = CartItemModel.objects.filter(cart=cart)
+            cart_id = request.session.get('cart_id')
+            if cart_id:
+                cart = get_object_or_404(CartModel, cart_id=cart_id)
+            else:
+                cart = CartModel()
+                cart.save()
+                request.session['cart_id'] = cart.cart_id
+            cart.cart_items = CartItemModel.objects.filter(cart_id=cart)
             total_price = cart.get_total_price()
             return render(request, 'cart.html', {'cart': cart, 'cart_items':cart.cart_items, 'total_price': total_price})
         except ObjectDoesNotExist:
@@ -51,9 +57,9 @@ def list_add_item(request):
         order_item = CartItemModel.objects.filter(product_id=item_pk).first()
         if not order_item:
             order, created = CartItemModel.objects.get_or_create(
-                product = item,
+                name = item,
                 quantity = 1,
-                cart = cart
+                cart_id = cart
                 )
             print(order)
         else:
@@ -61,9 +67,9 @@ def list_add_item(request):
             order_item.save()
     else:
         order, created = CartItemModel.objects.get_or_create(
-            product = item,
+            name = item,
             quantity = quantity,
-            cart = cart
+            cart_id = cart
         )
     return redirect('/list/')
 
@@ -79,18 +85,18 @@ def detail_add_item(request):
         order_item = CartItemModel.objects.filter(product_id=item_pk).first()
         if not order_item:
             order, created = CartItemModel.objects.get_or_create(
-                product = item,
+                name = item,
                 quantity = quantity,
-                cart = cart
+                cart_id = cart
                 )
         else:
             order_item.quantity += quantity
             order_item.save()
     else:
         order, created = CartItemModel.objects.get_or_create(
-            product = item,
+            name = item,
             quantity = quantity,
-            cart = cart
+            cart_id = cart
             )
     return redirect(reverse('detail', kwargs={'pk': item_pk}))
 

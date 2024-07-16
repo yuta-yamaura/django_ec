@@ -12,7 +12,7 @@ class BaseMeta(models.Model):
 
 class ProductModel(BaseMeta):
     image = models.ImageField(upload_to='')
-    product = models.CharField(max_length=20)
+    name = models.CharField(max_length=20)
     price = models.IntegerField()
     discription = models.CharField(max_length=20)
 
@@ -20,7 +20,7 @@ class ProductModel(BaseMeta):
        db_table = 'Ec_ProductModel'
     
     def __str__(self):
-      return self.product
+      return self.name
 
 
 class CartModel(BaseMeta):
@@ -32,33 +32,33 @@ class CartModel(BaseMeta):
     def get_total_price(self):
       total_price = 0
       cart_items = self.cartitemmodel_set.all()
-      for cart_item in cart_items:
-         sub_total = cart_item.get_sub_total_price()
+      for order_item in cart_items:
+         sub_total = order_item.get_sub_total_price()
          total_price += sub_total
       return total_price
     
     def get_total_quantity(self):
          total_quantity = 0
-         cart_items = self.cartitemmodel_set.all()
-         for order_item in cart_items:
+         cart_quantity = self.cartitemmodel_set.all()
+         for order_item in cart_quantity:
             sub_quantity = order_item.quantity
             total_quantity += sub_quantity
          return total_quantity
 
 
 class CartItemModel(BaseMeta):
-    product = models.ForeignKey(ProductModel, on_delete=models.CASCADE)
+    name = models.ForeignKey(ProductModel, on_delete=models.CASCADE)
     quantity = models.IntegerField(default=1)
-    cart = models.ForeignKey(CartModel, on_delete=models.CASCADE)
+    cart_id = models.ForeignKey(CartModel, on_delete=models.CASCADE)
 
     def __str__(self):
-      return str(self.product)
+      return str(self.name)
 
     def get_price(self):
-       return self.product.price
+       return self.name.price
     
     def get_sub_total_price(self):
-       return self.product.price * self.quantity
+       return self.name.price * self.quantity
 
 
 class OrderdModel(BaseMeta):

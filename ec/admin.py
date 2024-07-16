@@ -4,18 +4,18 @@ from .models import ProductModel, OrderdModel, CartItemModel, CartModel
 # Register your models here.
 
 class ProductModeladmin(admin.ModelAdmin):
-    list_editable = ('product', 'price', 'discription')
-    fields = ('image', 'product', 'price', 'discription')
-    list_display = ('image', 'product', 'price', 'created_at', 'updated_at', 'discription')
+    list_editable = ('name', 'price', 'discription')
+    fields = ('image', 'name', 'price', 'discription')
+    list_display = ('image', 'name', 'price', 'created_at', 'updated_at', 'discription')
     list_display_links = ('image',)
 
 admin.site.register(ProductModel, ProductModeladmin)
 
 
 class CartItemModeladmin(admin.ModelAdmin):
-    list_editable = ('product', 'quantity', 'cart')
-    fields = ('product', 'quantity', 'cart')
-    list_display = ('product', 'quantity', 'cart')
+    list_editable = ('name', 'quantity', 'cart_id')
+    fields = ('name', 'quantity', 'cart_id')
+    list_display = ('name', 'quantity', 'cart_id')
     list_display_links = None
 
 admin.site.register(CartItemModel, CartItemModeladmin)
