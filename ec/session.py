@@ -2,14 +2,14 @@ from ec.models import CartModel
 
 
 def get_session(request):
-    cart_id = request.session.get('cart_id', None)
-    if cart_id is None:
+    cart = request.session.get('cart', None)
+    if cart is None:
         cart, created  = CartModel.objects.get_or_create(
-            cart_id=cart_id
+            cart=cart
             )
-        request.session['cart_id'] = cart.cart_id
+        request.session['cart'] = cart
         return cart
     cart, created = CartModel.objects.get_or_create(
-        cart_id=cart_id
+        cart=cart
         )
     return cart
