@@ -33,7 +33,7 @@
                             <div class="card-body p-4">
                                 <div class="text-center">
                                     <!-- Product name-->
-                                    <h5 class="fw-bolder">{{ product.name }}</h5>
+                                    <h5 class="fw-bolder">{{ product.product }}</h5>
                                     <!-- Product price-->
                                     {{ product.price }}円
                                 </div>
@@ -44,7 +44,7 @@
                                     {% csrf_token %}
                                     <input type="hidden" name="quantity" value="1"/>
                                         <input type="hidden" name="item_pk" value="{{product.pk}}">
-                                            <input type="hidden" name="name" value="{{product.name}}">
+                                            <input type="hidden" name="product" value="{{product.product}}">
                                                 <button type="submit" class="btn">
                                                     <div class="text-center"><a class="btn btn-outline-dark mt-auto">Add to cart</a></div>
                                                 </button>

@@ -55,10 +55,10 @@
           <tr>
             <td>
               <li class="list-group-item d-flex justify-content-between row g-1 border">
-                <div><h6 class="my-0">{{ cart_item.name }}</h6></div>
+                <div><h6 class="my-0">{{ cart_item.product }}</h6></div>
                   <small class="text-body-secondary"></small>
                 <div>
-                  <span class="text-body-secondary mx-2">¥{{ cart_item.name.price }}</span>
+                  <span class="text-body-secondary mx-2">¥{{ cart_item.product.price }}</span>
                   <span class="text-body-secondary mx-3">{{ cart_item.quantity }}個</span>
                   <span class="text-body-secondary mx-4">小計 ¥{{ cart_item.get_sub_total_price }}</span>
                 </div>
