@@ -34,21 +34,13 @@ class CartModel(BaseMeta):
     def get_total_price(self):
       total_price = 0
       cart_items = self.cartitemmodel_set.all()
-      sub_total_prices = []
-      for cart_item in cart_items:
-         sub_total_price = cart_item.get_sub_total_price()
-         sub_total_prices.append(sub_total_price)
-      total_price = reduce(add, sub_total_prices, 0)
+      total_price = reduce(lambda acc, cart_item: acc + cart_item.get_sub_total_price(), cart_items, 0)
       return total_price
     
     def get_total_quantity(self):
          total_quantity = 0
          cart_quantity = self.cartitemmodel_set.all()
-         total_quantites = []
-         for cart_item in cart_quantity:
-            sub_quantity = cart_item.quantity
-            total_quantites.append(sub_quantity)
-         total_quantity = reduce(add, total_quantites, 0)
+         total_quantity = reduce(lambda acc, cart_item: acc + cart_item.quantity, cart_quantity, 0)
          return total_quantity
 
 
