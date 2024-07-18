@@ -9,7 +9,7 @@ from django.urls import reverse, reverse_lazy
 from django.core.exceptions import ObjectDoesNotExist
 from django.views.decorators.csrf import requires_csrf_token
 from django.http import HttpResponse, HttpResponseServerError
-from ec.function import get_session
+from ec.session import get_session
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -38,22 +38,16 @@ def redirect_site(request): # herokuデプロイ用
     return redirect('https://django2ec-d9aba89433ee.herokuapp.com/')
 
 
-class CartListView(LoginRequiredMixin, ListView):
+class CartListView(ListView):
     model = CartItemModel, CartModel
     template_name = 'cart.html'
 
     def get(self, request):
         try:
-            cart_id = request.session.get('cart_id')
-            if cart_id:
-                cart = get_object_or_404(CartModel, cart_id=cart_id)
-            else:
-                cart = CartModel()
-                cart.save()
-                request.session['cart_id'] = cart.cart_id
-            cart_items = CartItemModel.objects.filter(cart_id=cart)
-            total_price = cart.get_total_price()
-            return render(request, 'cart.html', {'cart': cart, 'cart_items':cart_items, 'total_price': total_price})
+            cart_id = get_session(request)
+            cart_id.cart_items = CartItemModel.objects.filter(cart_id=cart_id)
+            total_price = cart_id.get_total_price()
+            return render(request, 'cart.html', {'cart_id': cart_id, 'cart_items':cart_id.cart_items, 'total_price': total_price})
         except ObjectDoesNotExist:
             return render(request, 'cart.html', {'cart': None, 'cart_items':[], 'total_price': 0})
 
@@ -64,25 +58,28 @@ def list_add_item(request):
     quantity = int(request.POST.get('quantity'))
     cart = get_session(request)
 
-    order = CartItemModel.objects.all()
-    if order.exists():
-        order_item = CartItemModel.objects.filter(name_id=item_pk).first()
-        if not order_item:
+    cart_item = CartItemModel.objects.filter(cart=cart)
+    if cart_item.exists():
+        try:
+            cart_item_pk = CartItemModel.objects.get(cart=cart, product_id=item_pk)
+            if cart_item_pk in cart_item:
+                cart_item_pk.quantity += 1
+                cart_item_pk.save()
+                return redirect('/list/')
+        except CartItemModel.DoesNotExist:
             order, created = CartItemModel.objects.get_or_create(
-                name = item,
+                product = item,
                 quantity = 1,
-                cart_id = cart
+                cart = cart
                 )
-        else:
-            order_item.quantity += 1
-            order_item.save()
+            return redirect('/list/')
     else:
         order, created = CartItemModel.objects.get_or_create(
-            name = item,
-            quantity = quantity,
-            cart_id = cart
+        product = item,
+        quantity = 1,
+        cart = cart
         )
-    return redirect('/list/')
+        return redirect('/list/')
 
 @login_required
 def detail_add_item(request):
@@ -91,25 +88,28 @@ def detail_add_item(request):
     quantity = int(request.POST.get('quantity'))
     cart = get_session(request)
 
-    order = CartItemModel.objects.all()
-    if order.exists():
-        order_item = CartItemModel.objects.filter(name_id=item_pk).first()
-        if not order_item:
+    cart_item = CartItemModel.objects.filter(cart=cart)
+    if cart_item.exists():
+        try:
+            cart_item_pk = CartItemModel.objects.get(cart=cart, product_id=item_pk)
+            if cart_item_pk in cart_item:
+                cart_item_pk.quantity += quantity
+                cart_item_pk.save()
+                return redirect(reverse('detail', kwargs={'pk': item_pk}))
+        except CartItemModel.DoesNotExist:
             order, created = CartItemModel.objects.get_or_create(
-                name = item,
+                product = item,
                 quantity = quantity,
-                cart_id = cart
+                cart = cart
                 )
-        else:
-            order_item.quantity += quantity
-            order_item.save()
+            return redirect(reverse('detail', kwargs={'pk': item_pk}))
     else:
         order, created = CartItemModel.objects.get_or_create(
-            name = item,
-            quantity = quantity,
-            cart_id = cart
-            )
-    return redirect(reverse('detail', kwargs={'pk': item_pk}))
+        product = item,
+        quantity = quantity,
+        cart = cart
+        )
+        return redirect(reverse('detail', kwargs={'pk': item_pk}))
 
 @login_required
 def remove_from_cart(request, pk):
@@ -223,6 +223,13 @@ class AccountUpdateView(LoginRequiredMixin, UpdateView):
         # URL変数ではなく、現在のユーザーから直接pkを取得
         self.kwargs['pk'] = self.request.user.pk
         return super().get_object()
+
+
+def apply_promotion(request):
+    cart = get_object_or_404(CartModel, pk=request.session.get('cart_id'))
+    promotion_code = request.POST.get('promotion_code')
+    discounted_price = cart.apply_promotion_code(promotion_code)
+    return render(request, 'cart/summary.html', {'cart': cart, 'discounted_price': discounted_price})
 
 
 @requires_csrf_token

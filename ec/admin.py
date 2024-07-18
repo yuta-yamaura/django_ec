@@ -1,21 +1,21 @@
 from django.contrib import admin
-from .models import ProductModel, OrderdModel, CartItemModel, CartModel, User
+from .models import ProductModel, OrderdModel, CartItemModel, CartModel, User, PromotionCodeModel
 from django.contrib.auth.admin import UserAdmin
 from ec.forms import UserCreationForm
 
 # Register your models here.
 
 class ProductModeladmin(admin.ModelAdmin):
-    list_editable = ('name', 'price', 'discription')
-    fields = ('image', 'name', 'price', 'discription')
-    list_display = ('image', 'name', 'price', 'created_at', 'updated_at', 'discription')
+    list_editable = ('product', 'price', 'discription')
+    fields = ('image', 'product', 'price', 'discription')
+    list_display = ('image', 'product', 'price', 'created_at', 'updated_at', 'discription')
     list_display_links = ('image',)
 
 
 class CartItemModeladmin(admin.ModelAdmin):
-    list_editable = ('name', 'quantity', 'cart_id')
-    fields = ('name', 'quantity', 'cart_id')
-    list_display = ('name', 'quantity', 'cart_id')
+    list_editable = ('product', 'quantity', 'cart')
+    fields = ('product', 'quantity', 'cart')
+    list_display = ('product', 'quantity', 'cart')
     list_display_links = None
 
 
@@ -65,8 +65,15 @@ class CustomUseradmin(UserAdmin):
     add_form = UserCreationForm
 
 
+class PromotionCodeModeladmin(admin.ModelAdmin):
+    list_editable = ('promotion_code', 'amount',)
+    fields = ('promotion_code', 'amount',)
+    list_display = ('promotion_code', 'amount',)
+    list_display_links = None
+
 admin.site.register(ProductModel, ProductModeladmin)
 admin.site.register(CartItemModel, CartItemModeladmin)
 admin.site.register(CartModel, CartModeladmin)
 admin.site.register(OrderdModel, OrderdModeladmin)
 admin.site.register(User, CustomUseradmin)
+admin.site.register(PromotionCodeModel, PromotionCodeModeladmin)

@@ -1,4 +1,6 @@
 from django.db import models
+from functools import reduce
+from operator import add
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
 from django.contrib.auth import get_user_model
 
@@ -14,7 +16,7 @@ class BaseMeta(models.Model):
 
 class ProductModel(BaseMeta):
     image = models.ImageField(upload_to='')
-    name = models.CharField(max_length=20)
+    product = models.CharField(max_length=20)
     price = models.IntegerField()
     discription = models.CharField(max_length=20)
 
@@ -22,7 +24,7 @@ class ProductModel(BaseMeta):
        db_table = 'Ec_ProductModel'
     
     def __str__(self):
-      return self.name
+      return self.product
 
 
 class CartModel(BaseMeta):
@@ -34,33 +36,46 @@ class CartModel(BaseMeta):
     def get_total_price(self):
       total_price = 0
       cart_items = self.cartitemmodel_set.all()
-      for order_item in cart_items:
-         sub_total = order_item.get_sub_total_price()
-         total_price += sub_total
+      sub_total_prices = []
+      for cart_item in cart_items:
+         sub_total_price = cart_item.get_sub_total_price()
+         sub_total_prices.append(sub_total_price)
+      total_price = reduce(add, sub_total_prices, 0)
       return total_price
     
     def get_total_quantity(self):
          total_quantity = 0
          cart_quantity = self.cartitemmodel_set.all()
-         for order_item in cart_quantity:
-            sub_quantity = order_item.quantity
-            total_quantity += sub_quantity
+         total_quantites = []
+         for cart_item in cart_quantity:
+            sub_quantity = cart_item.quantity
+            total_quantites.append(sub_quantity)
+         total_quantity = reduce(add, total_quantites, 0)
          return total_quantity
+    
+    def apply_promotion_code(self, promotion_code):
+        try:
+            promo_code = PromotionCodeModel.objects.get(promotion_code=promotion_code)
+            total_price = self.get_total_price()
+            discount_price = total_price - promo_code.amount
+            return max(discount_price, 0)
+        except PromotionCodeModel.DoesNotExist:
+            return self.get_total_price()
 
 
 class CartItemModel(BaseMeta):
-    name = models.ForeignKey(ProductModel, on_delete=models.CASCADE)
+    product = models.ForeignKey(ProductModel, on_delete=models.CASCADE)
     quantity = models.IntegerField(default=1)
-    cart_id = models.ForeignKey(CartModel, on_delete=models.CASCADE)
+    cart = models.ForeignKey(CartModel, on_delete=models.CASCADE)
 
     def __str__(self):
-      return str(self.name)
+      return str(self.product)
 
     def get_price(self):
-       return self.name.price
+       return self.product.price
     
     def get_sub_total_price(self):
-       return self.name.price * self.quantity
+       return self.product.price * self.quantity
 
 
 class UserManeger(BaseUserManager):
@@ -128,3 +143,9 @@ class OrderdModel(BaseMeta):
 
     class Meta:
        db_table = 'Ec_OrderdModel'
+
+
+class PromotionCodeModel(BaseMeta):
+    id = models.AutoField(primary_key=True)
+    promotion_code = models.CharField(max_length=10)
+    amount = models.IntegerField()

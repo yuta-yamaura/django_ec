@@ -40,6 +40,7 @@ urlpatterns = [
     path('account/', views.AccountUpdateView.as_view()), # アカウント更新
     path('orders/', views.OrderIndexView.as_view()), # 購入明細一覧
     path('orders/<int:pk>/', views.OrderDetailView.as_view()), # 購入明細の詳細
+    path('apply_promotion/', views.apply_promotion), # プロモーションコードの実装
     path('', views.ProductListView.as_view()),# herokuにデプロイする際のpath
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) \
   + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
