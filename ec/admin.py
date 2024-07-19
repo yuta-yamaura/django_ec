@@ -8,6 +8,7 @@ class ProductModeladmin(admin.ModelAdmin):
     fields = ('image', 'product', 'price', 'discription')
     list_display = ('image', 'product', 'price', 'created_at', 'updated_at', 'discription')
     list_display_links = ('image',)
+    list_filter = ('name', 'price',)
 
 admin.site.register(ProductModel, ProductModeladmin)
 
