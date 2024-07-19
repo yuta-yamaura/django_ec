@@ -55,6 +55,10 @@ class CartListView(LoginRequiredMixin, ListView):
 @login_required
 def list_add_item(request):
     item_pk = request.POST.get('item_pk')
+    if not item_pk:
+        return redirect('/list/')
+
+    item_pk = request.POST.get('item_pk')
     item = get_object_or_404(ProductModel, pk=item_pk)
     quantity = int(request.POST.get('quantity'))
     cart = get_session(request)
@@ -71,6 +75,8 @@ def list_add_item(request):
 @login_required
 def detail_add_item(request):
     item_pk = request.POST.get('item_pk')
+    if not item_pk:
+        return redirect('/list/')
     item = get_object_or_404(ProductModel, pk=item_pk)
     quantity = int(request.POST.get('quantity'))
     cart = get_session(request)
@@ -156,7 +162,6 @@ class OrderIndexView(LoginRequiredMixin, ListView):
 class OrderDetailView(LoginRequiredMixin, DetailView):
     model = OrderdModel
     template_name = 'order.html'
-
 
     def get_queryset(self):
         return OrderdModel.objects.filter(user=self.request.user).order_by('-created_at')
