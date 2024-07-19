@@ -11,8 +11,9 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 import environ
-import dj_database_url
 import os
+import dj_database_url
+from decouple import config
 
 from pathlib import Path
 
@@ -29,7 +30,7 @@ environ.Env.read_env(env_file=str(BASE_DIR) + "/.env")
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = env("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = bool(int(os.environ.get('DEBUG', default=0)))
 
 ALLOWED_HOSTS = ['.herokuapp.com','localhost']
 CSRF_TRUSTED_ORIGINS = ['https://*.herokuapp.com']
@@ -85,9 +86,20 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-DATABASES = {
-    "default": dj_database_url.config(default=env('DATABASE_URL')),
-}
+# 環境変数から DATABASE_URL を取得
+DATABASE_URL = config('DATABASE_URL', default='')
+
+# 開発環境と商用環境でデータベース設定を切り替える
+if DATABASE_URL:
+    # 開発環境
+    DATABASES = {
+        'default': dj_database_url.parse(DATABASE_URL, conn_max_age=500, ssl_require=False)
+    }
+else:
+    # 商用環境 (Heroku)
+    DATABASES = {
+        'default': dj_database_url.config(conn_max_age=500, ssl_require=True)
+    }
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -122,6 +134,7 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 STATIC_URL = 'static/'
 
@@ -141,11 +154,6 @@ LOGIN_URL = 'login/'
 LOGIN_REDIRECT_URL = 'accounts/profile/'
 LOGOUT_REDIRECT_URL = '/'
 
-try:
-    from .local_settings import *
-except ImportError:
-    pass
-
 if not DEBUG:
 
     #追加
@@ -160,7 +168,6 @@ if not DEBUG:
     AWS_S3_FILE_OVERWRITE = False
     AWS_DEFAULT_ACL = None
 
+    SECRET_KEY = os.environ['SECRET_KEY']
     import django_heroku
     django_heroku.settings(locals())
-    
-DEBUG = True
