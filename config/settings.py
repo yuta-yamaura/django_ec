@@ -177,17 +177,6 @@ if not DEBUG:
     import django_heroku
     django_heroku.settings(locals())
 
-# カスタムユーザモデル
-AUTH_USER_MODEL = 'ec.User'
-
-LOGIN_URL = '/login/'
-
-LOGIN_REDIRECT_URL = '/'
-
-LOGOUT_URL = '/logout/'
-
-LOGOUT_REDIRECT_URL = '/login/'
-
 # メール設定
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_USE_TLS = True
