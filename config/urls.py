@@ -22,6 +22,7 @@ from django.urls import include, path
 from django.conf import settings
 from django.conf.urls.static import static
 from ec import views
+from django.contrib.auth.views import LogoutView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -32,6 +33,13 @@ urlpatterns = [
     path('cart/add/list/', views.list_add_item), # カート追加
     path('cart/add/detail/', views.detail_add_item), # カート追加
     path('cart/remove/<str:pk>/', views.remove_from_cart), # カート削除
+    path('cart/checkout/', views.CheckOutView.as_view()), # チェックアウト
+    path('signup/', views.SignupView.as_view()), # サインアップ
+    path('login/', views.Login.as_view()), # ログイン
+    path('logout/', LogoutView.as_view()), # ログアウト
+    path('account/', views.AccountUpdateView.as_view()), # アカウント更新
+    path('orders/', views.OrderIndexView.as_view()), # 購入明細一覧
+    path('orders/<int:pk>/', views.OrderDetailView.as_view()), # 購入明細の詳細
     path('', views.ProductListView.as_view()),# herokuにデプロイする際のpath
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) \
   + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

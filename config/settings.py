@@ -14,8 +14,8 @@ import environ
 import os
 import dj_database_url
 from decouple import config
-
 from pathlib import Path
+from django.contrib.messages import constants as messages
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -82,6 +82,9 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'config.wsgi.application'
 
+MESSAGE_TAGS = {
+    messages.SUCCESS: 'alert alert-success',
+}
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
@@ -138,7 +141,9 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 STATIC_URL = 'static/'
 
-STATICFILES_DIRS = [str(BASE_DIR / "static")]
+STATICFILES_DIRS = [str(BASE_DIR / "static"),
+                    str(BASE_DIR / "static/assets/dist/css"),
+                    ]
 
 MEDIA_ROOT = BASE_DIR / 'media'
 
@@ -171,3 +176,22 @@ if not DEBUG:
     SECRET_KEY = os.environ['SECRET_KEY']
     import django_heroku
     django_heroku.settings(locals())
+
+# カスタムユーザモデル
+AUTH_USER_MODEL = 'ec.User'
+
+LOGIN_URL = '/login/'
+
+LOGIN_REDIRECT_URL = '/'
+
+LOGOUT_URL = '/logout/'
+
+LOGOUT_REDIRECT_URL = '/login/'
+
+# メール設定
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'shk0fate@gmail.com'
+EMAIL_HOST_PASSWORD= 'mhwh jwhd abpl zyvn'
+EMAIL_PORT = 587

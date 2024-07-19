@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+ 
+{% block main %}
+ 
+<div class="container my-5">
+  <div class="row">
+    <div class="col-12">
+      <h2 class="my-4">注文情報</h2>
+      <table class="table mb-5">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">詳細情報</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">No.</th>
+            <td>{{object.pk}}</td>
+          </tr>
+          <tr>
+            <th scope="row">合計金額</th>
+            <td>¥{{object.total_price}}</td>
+          </tr>
+ 
+          <tr>
+            <th scope="row">注文確定日</th>
+            <td>{{object.created_at|date:"Y-m-d f"}}</td>
+          </tr>
+          <tr>
+            <th scope="row">住所1</th>
+            <td>{{object.address1}}</td>
+          </tr>
+          <tr>
+            <th scope="row">住所2</th>
+            <td>{{object.address2}}</td>
+          </tr>
+        </tbody>
+      </table>
+
+ 
+      <h2 class="my-4">注文アイテム一覧</h2>
+      <table class="table mb-5">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">商品名</th>
+            <th scope="col">価格</th>
+            <th scope="col">数量</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in items %}
+          <tr>
+            <th scope="row">{{ forloop.counter }}</th>
+            <td>{{ item.name }}</td>
+            <td>¥{{item.price}}</td>
+            <td>{{item.quantity}}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+ 
+{% endblock %}
