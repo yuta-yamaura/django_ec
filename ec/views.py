@@ -96,7 +96,7 @@ class CheckOutView(CreateView, SuccessMessageMixin):
     def form_valid(self, form):
         cart = get_session(self.request)
         self.object = form.save(commit=False)
-        cart_items = cart.cartitemmodel_set.filter(cart_id=cart)
+        cart_items = cart.cartitemmodel_set.all()
         items_data = []
 
         for item in cart_items:
