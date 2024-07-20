@@ -1,6 +1,8 @@
 from django.db import models
 from functools import reduce
 from operator import add
+from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
+from django.contrib.auth import get_user_model
 
 # Create your models here.
 
@@ -60,6 +62,7 @@ class CartItemModel(BaseMeta):
 
 
 class OrderdModel(BaseMeta):
+    id = models.AutoField(primary_key=True)
     lastname = models.CharField(max_length=10)
     firstname = models.CharField(max_length=10)
     username = models.CharField(max_length=20)
@@ -67,9 +70,12 @@ class OrderdModel(BaseMeta):
     address1 = models.CharField(max_length=50)
     address2 = models.CharField(max_length=50)
     holder = models.CharField(max_length=20)
-    credit_card_number = models.IntegerField()
-    date_of_expiry = models.DateField(auto_now=False)
+    credit_card_number = models.BigIntegerField()
+    date_of_expiry = models.CharField()
     security_code = models.IntegerField()
+    cart_id = models.ForeignKey(CartModel, on_delete=models.PROTECT)
+    items = models.JSONField()
+    total_price = models.IntegerField()
 
     class Meta:
        db_table = 'Ec_OrderdModel'
