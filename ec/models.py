@@ -1,8 +1,5 @@
 from django.db import models
 from functools import reduce
-from operator import add
-from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
-from django.contrib.auth import get_user_model
 
 # Create your models here.
 
@@ -46,6 +43,16 @@ class CartModel(BaseMeta):
          return total_quantity
 
 
+    def apply_promotion_code(self, promotion_code):
+        try:
+            promo_code = PromotionCodeModel.objects.get(promotion_code=promotion_code)
+            total_price = self.get_total_price()
+            discount_price = total_price - promo_code.amount
+            return discount_price
+        except PromotionCodeModel.DoesNotExist:
+            return self.get_total_price()
+
+
 class CartItemModel(BaseMeta):
     product = models.ForeignKey(ProductModel, on_delete=models.CASCADE)
     quantity = models.IntegerField(default=1)
@@ -79,4 +86,10 @@ class OrderdModel(BaseMeta):
 
     class Meta:
        db_table = 'Ec_OrderdModel'
-    
+
+
+class PromotionCodeModel(BaseMeta):
+    id = models.AutoField(primary_key=True)
+    promotion_code = models.CharField(max_length=10)
+    amount = models.IntegerField()
+    used_flag = models.BooleanField(default=False)

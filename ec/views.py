@@ -1,8 +1,9 @@
 from django.contrib.auth.forms import AuthenticationForm
 from django.db.models.base import Model as Model
 from django.db.models.query import QuerySet
-from .models import ProductModel, CartItemModel, CartModel, OrderdModel
-from django.views.generic import ListView, DetailView, DetailView, CreateView, UpdateView
+from .models import ProductModel, CartItemModel, CartModel, OrderdModel, PromotionCodeModel
+from django.views.generic import ListView, DetailView, DetailView, CreateView
+from django.views.generic.edit import FormView
 from config.templates import *
 from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse, reverse_lazy
@@ -17,6 +18,7 @@ import json
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
+from ec.forms import PromtionForm
 
 # Create your views here.
 
@@ -155,6 +157,29 @@ class OrderDetailView(DetailView):
         obj = self.get_object()
         context["items"] = json.loads(obj.items)
         return context
+
+
+class PromtionView(FormView):
+    model = PromotionCodeModel
+    template_name = "cart.html"
+    form_class = PromtionForm
+    success_url = reverse_lazy('cart')
+
+    def form_valid(self, form):
+        cart = get_session(self.request)
+        print('cart.cart_id')
+        print(cart.cart_id)
+        input_promotion_code = form.cleaned_data['promotion_code']
+        promotion_code = PromotionCodeModel.objects.get(promotion_code=input_promotion_code)
+        discounted_price = cart.apply_promotion_code(input_promotion_code)
+        context = {
+            'cart': cart,
+            'cart_items':cart.cartitemmodel_set.all(),
+            'discounted_price': discounted_price,
+            'promotion_code': input_promotion_code,
+            'amount': promotion_code.amount
+        }
+        return render(self.request, 'cart.html', context)
 
 
 @requires_csrf_token
