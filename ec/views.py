@@ -179,17 +179,15 @@ class PromtionView(FormView):
 
     def form_valid(self, form):
         cart = get_session(self.request)
+        session_promotion = self.request.session.get('promotion_code')
         input_promotion_code = form.cleaned_data['promotion_code']
         tmp_promo = PromotionCodeModel.objects.filter(promotion_code=input_promotion_code)
         if tmp_promo.exists():
             promotion_code = PromotionCodeModel.objects.get(promotion_code=input_promotion_code)
-            self.request.session['promotion_code'] = promotion_code.promotion_code
-            session_promotion = self.request.session.get('promotion_code')
             # プロモーションコードのセッションがあって、used_flagがTrueのパターン
-            if session_promotion is not None and promotion_code.used_flag is True:
+            if input_promotion_code in session_promotion and promotion_code.used_flag is True:
                 discounted_price = cart.apply_promotion_code(input_promotion_code)
                 promotion_code = PromotionCodeModel.objects.get(promotion_code=input_promotion_code)
-                self.request.session['promotion_code'] = promotion_code.promotion_code
                 context = {
                     'cart': cart,
                     'cart_items':cart.cartitemmodel_set.all(),
@@ -199,8 +197,11 @@ class PromtionView(FormView):
                     'used_flag': promotion_code.used_flag
                 }
                 return render(self.request, 'cart.html', context)
-            # プロモーションコードのセッションがあって、used_flagがFalseのパターン
-            if session_promotion is not None:
+            # プロモーションコードが既に使用済みのパターン
+            if promotion_code.used_flag is True:
+                return redirect('/cart/')
+            # プロモーションコードを初めて使うパターン
+            if promotion_code.used_flag is False:
                 discounted_price = cart.apply_promotion_code(input_promotion_code)
                 promotion_code = PromotionCodeModel.objects.get(promotion_code=input_promotion_code)
                 self.request.session['promotion_code'] = promotion_code.promotion_code
