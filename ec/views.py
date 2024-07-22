@@ -112,6 +112,17 @@ class CheckOutView(CreateView, SuccessMessageMixin):
         items_data = json.dumps(items_data)
         self.object.items = items_data
         self.object.total_price = cart.get_total_price()
+
+        # promotion_codeが適用されてるかチェック
+        promotion_code = self.request.session.get('promotion_code')
+        if promotion_code is not None:
+            discounted_price = cart.apply_promotion_code(promotion_code)
+            promotion_code = PromotionCodeModel.objects.get(promotion_code=promotion_code)
+            amount = promotion_code.amount
+            self.object.promotion_code = promotion_code.promotion_code
+            self.object.amount = amount
+            self.object.total_price = discounted_price
+            self.request.session.flush()
         self.object.save()
         cart_items.all().delete()
 
@@ -171,6 +182,7 @@ class PromtionView(FormView):
         if PromotionCodeModel.objects.filter(promotion_code=input_promotion_code).exists():
             discounted_price = cart.apply_promotion_code(input_promotion_code)
             promotion_code = PromotionCodeModel.objects.get(promotion_code=input_promotion_code)
+            self.request.session['promotion_code'] = promotion_code.promotion_code
             context = {
                 'cart': cart,
                 'cart_items':cart.cartitemmodel_set.all(),
