@@ -19,7 +19,7 @@
           <tr>
             <td><a href="/orders/{{object.pk}}/">{{object.pk}}</a></td>
             <td>{{object.created_at|date:"Y-m-d f"}}</td>
-            <td>{{object.user}}</td>
+            <td>{{object.username}}</td>
             <td>¥{{object.total_price}}</td>
           </tr>
           {% endfor %}
