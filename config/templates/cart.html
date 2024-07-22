@@ -71,7 +71,7 @@
             </td>
           </tr>
           {% endfor %}
-          {% if discounted_price is not None %}
+          {% if promotion_code is not None %}
           <li class="list-group-item d-flex justify-content-between bg-body-tertiary lh-sm row g-1 border">
             <div class="text-success">
               <h6 class="my-0">プロモーションコード適用</h6>
@@ -80,7 +80,7 @@
             <span class="text-success">{{ amount }}円割引</span>
           </li>
           {% endif %}
-          {% if discounted_price is not None %}
+          {% if promotion_code is not None %}
           <li class="list-group-item d-flex justify-content-between lh-sm row g-1 border">
             <span>合計金額(割引適用後)</span>
               <strong>¥{{ discounted_price }}</strong>

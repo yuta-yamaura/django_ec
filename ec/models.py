@@ -1,5 +1,7 @@
 from django.db import models
 from functools import reduce
+from django.shortcuts import redirect, get_object_or_404
+from django.http import HttpResponseRedirect, Http404
 
 # Create your models here.
 
@@ -37,20 +39,16 @@ class CartModel(BaseMeta):
       return total_price
     
     def get_total_quantity(self):
-         total_quantity = 0
-         cart_quantity = self.cartitemmodel_set.all()
-         total_quantity = reduce(lambda acc, cart_item: acc + cart_item.quantity, cart_quantity, 0)
-         return total_quantity
-
+      total_quantity = 0
+      cart_quantity = self.cartitemmodel_set.all()
+      total_quantity = reduce(lambda acc, cart_item: acc + cart_item.quantity, cart_quantity, 0)
+      return total_quantity
 
     def apply_promotion_code(self, promotion_code):
-        try:
-            promo_code = PromotionCodeModel.objects.get(promotion_code=promotion_code)
-            total_price = self.get_total_price()
-            discount_price = total_price - promo_code.amount
-            return discount_price
-        except PromotionCodeModel.DoesNotExist:
-            return self.get_total_price()
+      promo_code = get_object_or_404(PromotionCodeModel, promotion_code=promotion_code)
+      total_price = self.get_total_price()
+      discounted_price = total_price - promo_code.amount
+      return discounted_price
 
 
 class CartItemModel(BaseMeta):
@@ -68,6 +66,13 @@ class CartItemModel(BaseMeta):
        return self.product.price * self.quantity
 
 
+class PromotionCodeModel(BaseMeta):
+    id = models.AutoField(primary_key=True)
+    promotion_code = models.CharField(max_length=10)
+    amount = models.IntegerField()
+    used_flag = models.BooleanField(default=False)
+
+
 class OrderdModel(BaseMeta):
     id = models.AutoField(primary_key=True)
     lastname = models.CharField(max_length=10)
@@ -82,14 +87,9 @@ class OrderdModel(BaseMeta):
     security_code = models.IntegerField()
     cart_id = models.ForeignKey(CartModel, on_delete=models.PROTECT)
     items = models.JSONField()
+    promotion_code = models.CharField(max_length=10, null=True)
+    amount = models.IntegerField(null=True)
     total_price = models.IntegerField()
 
     class Meta:
        db_table = 'Ec_OrderdModel'
-
-
-class PromotionCodeModel(BaseMeta):
-    id = models.AutoField(primary_key=True)
-    promotion_code = models.CharField(max_length=10)
-    amount = models.IntegerField()
-    used_flag = models.BooleanField(default=False)

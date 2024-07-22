@@ -167,19 +167,19 @@ class PromtionView(FormView):
 
     def form_valid(self, form):
         cart = get_session(self.request)
-        print('cart.cart_id')
-        print(cart.cart_id)
         input_promotion_code = form.cleaned_data['promotion_code']
-        promotion_code = PromotionCodeModel.objects.get(promotion_code=input_promotion_code)
-        discounted_price = cart.apply_promotion_code(input_promotion_code)
-        context = {
-            'cart': cart,
-            'cart_items':cart.cartitemmodel_set.all(),
-            'discounted_price': discounted_price,
-            'promotion_code': input_promotion_code,
-            'amount': promotion_code.amount
-        }
-        return render(self.request, 'cart.html', context)
+        if PromotionCodeModel.objects.filter(promotion_code=input_promotion_code).exists():
+            discounted_price = cart.apply_promotion_code(input_promotion_code)
+            promotion_code = PromotionCodeModel.objects.get(promotion_code=input_promotion_code)
+            context = {
+                'cart': cart,
+                'cart_items':cart.cartitemmodel_set.all(),
+                'discounted_price': discounted_price,
+                'promotion_code': input_promotion_code,
+                'amount': promotion_code.amount
+            }
+            return render(self.request, 'cart.html', context)
+        return redirect('/cart/')
 
 
 @requires_csrf_token
