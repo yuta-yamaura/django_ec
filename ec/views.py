@@ -185,8 +185,21 @@ class PromtionView(FormView):
             promotion_code = PromotionCodeModel.objects.get(promotion_code=input_promotion_code)
             self.request.session['promotion_code'] = promotion_code.promotion_code
             session_promotion = self.request.session.get('promotion_code')
+            # プロモーションコードのセッションがあって、used_flagがTrueのパターン
             if session_promotion is not None and promotion_code.used_flag is True:
-                return redirect('/cart/')
+                discounted_price = cart.apply_promotion_code(input_promotion_code)
+                promotion_code = PromotionCodeModel.objects.get(promotion_code=input_promotion_code)
+                self.request.session['promotion_code'] = promotion_code.promotion_code
+                context = {
+                    'cart': cart,
+                    'cart_items':cart.cartitemmodel_set.all(),
+                    'discounted_price': discounted_price,
+                    'promotion_code': input_promotion_code,
+                    'amount': promotion_code.amount,
+                    'used_flag': promotion_code.used_flag
+                }
+                return render(self.request, 'cart.html', context)
+            # プロモーションコードのセッションがあって、used_flagがFalseのパターン
             if session_promotion is not None:
                 discounted_price = cart.apply_promotion_code(input_promotion_code)
                 promotion_code = PromotionCodeModel.objects.get(promotion_code=input_promotion_code)
@@ -202,6 +215,7 @@ class PromtionView(FormView):
                 promotion_code.used_flag = True
                 promotion_code.save()
                 return render(self.request, 'cart.html', context)
+        # プロモーションコードがDBのレコードと一致しないパターン
         return redirect('/cart/')
 
 
