@@ -179,7 +179,7 @@ class PromtionView(FormView):
 
     def form_valid(self, form):
         cart = get_session(self.request)
-        # herokuのエラー回避のため、セッションにはデフォルトで0を指定
+        # herokuのエラー回避のため、セッションにはデフォルトで[]を指定
         session_promotion = self.request.session.get('promotion_code', [])
         input_promotion_code = form.cleaned_data['promotion_code']
         tmp_promo = PromotionCodeModel.objects.filter(promotion_code=input_promotion_code)
