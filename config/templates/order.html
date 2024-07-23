@@ -62,7 +62,7 @@
       </table>
 
 
-      {% if object.promotion_code is not None %}
+      {% if object.code is not None %}
       <h2 class="my-4">プロモーションコード適用</h2>
       <table class="table mb-5">
         <thead>
@@ -73,7 +73,7 @@
         </thead>
         <tbody>
           <tr>
-            <th scope="row">{{object.promotion_code}}</th>
+            <th scope="row">{{object.code}}</th>
             <td>{{object.amount}}円</td>
           </tr>
         </tbody>

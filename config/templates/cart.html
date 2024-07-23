@@ -71,16 +71,16 @@
             </td>
           </tr>
           {% endfor %}
-          {% if promotion_code is not None %}
+          {% if code is not None %}
           <li class="list-group-item d-flex justify-content-between bg-body-tertiary lh-sm row g-1 border">
             <div class="text-success">
               <h6 class="my-0">プロモーションコード適用</h6>
-              <small name="promotion_code" value="{{ promotion_code }}">使用コード：{{ promotion_code }}</small>
+              <small name="code" value="{{ code }}">使用コード：{{ code.code }}</small>
             </div>
             <span class="text-success">{{ amount }}円割引</span>
           </li>
           {% endif %}
-          {% if promotion_code is not None %}
+          {% if code is not None %}
           <li class="list-group-item d-flex justify-content-between lh-sm row g-1 border">
             <span>合計金額(割引適用後)</span>
               <strong>¥{{ discounted_price }}</strong>
@@ -95,7 +95,7 @@
         <form class="card p-2" action="/apply_promotion/" method="POST">
           {% csrf_token %}
           <div class="input-group">
-            <input type="text" class="form-control" placeholder="Promo code" name="promotion_code">
+            <input type="text" class="form-control" placeholder="Promo code" name="code">
             <button type="submit" class="btn btn-secondary">適用する</button>
           </div>
         </form>

@@ -44,8 +44,8 @@ class CartModel(BaseMeta):
       total_quantity = reduce(lambda acc, cart_item: acc + cart_item.quantity, cart_quantity, 0)
       return total_quantity
 
-    def apply_promotion_code(self, promotion_code):
-      promo_code = get_object_or_404(PromotionCodeModel, promotion_code=promotion_code)
+    def apply_code(self, code):
+      promo_code = get_object_or_404(PromotionCodeModel, code=code)
       total_price = self.get_total_price()
       discounted_price = total_price - promo_code.amount
       return discounted_price
@@ -68,9 +68,9 @@ class CartItemModel(BaseMeta):
 
 class PromotionCodeModel(BaseMeta):
     id = models.AutoField(primary_key=True)
-    promotion_code = models.CharField(max_length=10)
+    code = models.CharField(max_length=10)
     amount = models.IntegerField()
-    used_flag = models.BooleanField(default=False)
+    is_used = models.BooleanField(default=False)
 
 
 class OrderdModel(BaseMeta):
@@ -87,7 +87,7 @@ class OrderdModel(BaseMeta):
     security_code = models.IntegerField()
     cart_id = models.ForeignKey(CartModel, on_delete=models.PROTECT)
     items = models.JSONField()
-    promotion_code = models.CharField(max_length=10, null=True)
+    code = models.CharField(max_length=10, null=True)
     amount = models.IntegerField(null=True)
     total_price = models.IntegerField()
 

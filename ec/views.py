@@ -115,12 +115,12 @@ class CheckOutView(CreateView, SuccessMessageMixin):
         self.object.total_price = cart.get_total_price()
 
         # promotion_codeが適用されてるかチェック
-        promotion_code = self.request.session.get('promotion_code')
-        if promotion_code is not None:
-            discounted_price = cart.apply_promotion_code(promotion_code)
-            promotion_code = PromotionCodeModel.objects.get(promotion_code=promotion_code)
-            amount = promotion_code.amount
-            self.object.promotion_code = promotion_code.promotion_code
+        code = self.request.session.get('code')
+        if code is not None:
+            discounted_price = cart.apply_code(code)
+            code = PromotionCodeModel.objects.get(code=code)
+            amount = code.amount
+            self.object.code = code.code
             self.object.amount = amount
             self.object.total_price = discounted_price
             self.request.session.flush()
@@ -180,42 +180,42 @@ class PromtionView(FormView):
     def form_valid(self, form):
         cart = get_session(self.request)
         # herokuのエラー回避のため、セッションにはデフォルトで[]を指定
-        session_promotion = self.request.session.get('promotion_code', [])
-        input_promotion_code = form.cleaned_data['promotion_code']
-        tmp_promo = PromotionCodeModel.objects.filter(promotion_code=input_promotion_code)
+        session_promotion = self.request.session.get('code', [])
+        input_code = form.cleaned_data['code']
+        tmp_promo = PromotionCodeModel.objects.filter(code=input_code)
         if tmp_promo.exists():
-            promotion_code = PromotionCodeModel.objects.get(promotion_code=input_promotion_code)
-            # プロモーションコードのセッションがあって、used_flagがTrueのパターン
-            if input_promotion_code in session_promotion and promotion_code.used_flag is True:
-                discounted_price = cart.apply_promotion_code(input_promotion_code)
-                promotion_code = PromotionCodeModel.objects.get(promotion_code=input_promotion_code)
+            code = PromotionCodeModel.objects.get(code=input_code)
+            # プロモーションコードのセッションがあって、is_usedがTrueのパターン
+            if input_code in session_promotion and code.is_used is True:
+                discounted_price = cart.apply_code(input_code)
+                code = PromotionCodeModel.objects.get(code=input_code)
                 context = {
                     'cart': cart,
                     'cart_items':cart.cartitemmodel_set.all(),
                     'discounted_price': discounted_price,
-                    'promotion_code': input_promotion_code,
-                    'amount': promotion_code.amount,
-                    'used_flag': promotion_code.used_flag
+                    'code': code,
+                    'amount': code.amount,
+                    'is_used': code.is_used
                 }
                 return render(self.request, 'cart.html', context)
             # プロモーションコードが既に使用済みのパターン
-            if promotion_code.used_flag is True:
+            if code.is_used is True:
                 return redirect('/cart/')
             # プロモーションコードを初めて使うパターン
-            if promotion_code.used_flag is False:
-                discounted_price = cart.apply_promotion_code(input_promotion_code)
-                promotion_code = PromotionCodeModel.objects.get(promotion_code=input_promotion_code)
-                self.request.session['promotion_code'] = promotion_code.promotion_code
+            if code.is_used is False:
+                discounted_price = cart.apply_code(input_code)
+                code = PromotionCodeModel.objects.get(code=input_code)
+                self.request.session['code'] = code.code
                 context = {
                     'cart': cart,
                     'cart_items':cart.cartitemmodel_set.all(),
                     'discounted_price': discounted_price,
-                    'promotion_code': input_promotion_code,
-                    'amount': promotion_code.amount,
-                    'used_flag': promotion_code.used_flag
+                    'code': code,
+                    'amount': code.amount,
+                    'is_used': code.is_used
                 }
-                promotion_code.used_flag = True
-                promotion_code.save()
+                code.is_used = True
+                code.save()
                 return render(self.request, 'cart.html', context)
         # プロモーションコードがDBのレコードと一致しないパターン
         return redirect('/cart/')

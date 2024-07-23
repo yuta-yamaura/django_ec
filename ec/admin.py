@@ -26,15 +26,15 @@ class CartModeladmin(admin.ModelAdmin):
 
 class OrderdModeladmin(admin.ModelAdmin):
     list_editable = ('lastname', 'firstname', 'username', 'email', 'address1', 'address2', 'holder',  'credit_card_number', 'date_of_expiry', 'security_code', 'cart_id')
-    fields = ('id', 'lastname', 'firstname', 'username', 'email', 'address1', 'address2', 'holder',  'credit_card_number', 'date_of_expiry', 'security_code', 'cart_id', 'total_price', 'promotion_code', 'amount')
-    list_display = ('id', 'lastname', 'firstname', 'username', 'email', 'address1', 'address2', 'holder',  'credit_card_number', 'date_of_expiry', 'security_code', 'cart_id', 'items', 'total_price', 'promotion_code', 'amount')
+    fields = ('id', 'lastname', 'firstname', 'username', 'email', 'address1', 'address2', 'holder',  'credit_card_number', 'date_of_expiry', 'security_code', 'cart_id', 'total_price', 'code', 'amount')
+    list_display = ('id', 'lastname', 'firstname', 'username', 'email', 'address1', 'address2', 'holder',  'credit_card_number', 'date_of_expiry', 'security_code', 'cart_id', 'items', 'total_price', 'code', 'amount')
     list_display_links = None
 
 
 class PromotionCodeModeladmin(admin.ModelAdmin):
-    list_editable = ('promotion_code', 'amount',)
-    fields = ('promotion_code', 'amount', 'used_flag')
-    list_display = ('promotion_code', 'amount', 'used_flag')
+    list_editable = ('code', 'amount',)
+    fields = ('code', 'amount', 'is_used')
+    list_display = ('code', 'amount', 'is_used')
     list_display_links = None
 
 
