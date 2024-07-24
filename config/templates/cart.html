@@ -71,23 +71,32 @@
             </td>
           </tr>
           {% endfor %}
+          {% if code is not None %}
           <li class="list-group-item d-flex justify-content-between bg-body-tertiary lh-sm row g-1 border">
             <div class="text-success">
-              <h6 class="my-0">Promo code</h6>
-              <small>EXAMPLECODE</small>
+              <h6 class="my-0">プロモーションコード適用</h6>
+              <small name="code" value="{{ code }}">使用コード：{{ code.code }}</small>
             </div>
-            <span class="text-success">−$5</span>
+            <span class="text-success">{{ amount }}円割引</span>
           </li>
+          {% endif %}
+          {% if code is not None %}
+          <li class="list-group-item d-flex justify-content-between lh-sm row g-1 border">
+            <span>合計金額(割引適用後)</span>
+              <strong>¥{{ discounted_price }}</strong>
+          </li>
+          {% else %}
           <li class="list-group-item d-flex justify-content-between lh-sm row g-1 border">
             <span>合計金額</span>
               <strong>¥{{ total_price }}</strong>
           </li>
+          {% endif %}
         </ul>
-
-        <form class="card p-2">
+        <form class="card p-2" action="/apply_promotion/" method="POST">
+          {% csrf_token %}
           <div class="input-group">
-            <input type="text" class="form-control" placeholder="Promo code">
-            <button type="submit" class="btn btn-secondary">Redeem</button>
+            <input type="text" class="form-control" placeholder="Promo code" name="code">
+            <button type="submit" class="btn btn-secondary">適用する</button>
           </div>
         </form>
       </div>

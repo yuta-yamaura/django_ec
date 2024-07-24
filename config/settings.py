@@ -83,7 +83,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'config.wsgi.application'
 
 MESSAGE_TAGS = {
-    messages.SUCCESS: 'alert alert-success',
+    messages.SUCCESS: 'alert alert-success'
 }
 
 # Database

@@ -1,8 +1,9 @@
 from django.contrib.auth.forms import AuthenticationForm
 from django.db.models.base import Model as Model
 from django.db.models.query import QuerySet
-from .models import ProductModel, CartItemModel, CartModel, OrderdModel
-from django.views.generic import ListView, DetailView, DetailView, CreateView, UpdateView
+from .models import ProductModel, CartItemModel, CartModel, OrderdModel, PromotionCodeModel
+from django.views.generic import ListView, DetailView, DetailView, CreateView
+from django.views.generic.edit import FormView
 from config.templates import *
 from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse, reverse_lazy
@@ -13,10 +14,12 @@ from ec.session import get_session
 from django.http import JsonResponse
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
+from django.contrib import messages
 import json
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
+from ec.forms import PromtionForm
 
 # Create your views here.
 
@@ -110,6 +113,17 @@ class CheckOutView(CreateView, SuccessMessageMixin):
         items_data = json.dumps(items_data)
         self.object.items = items_data
         self.object.total_price = cart.get_total_price()
+
+        # promotion_codeが適用されてるかチェック
+        code = self.request.session.get('code')
+        if code is not None:
+            discounted_price = cart.apply_code(code)
+            code = PromotionCodeModel.objects.get(code=code)
+            amount = code.amount
+            self.object.code = code.code
+            self.object.amount = amount
+            self.object.total_price = discounted_price
+            self.request.session.flush()
         self.object.save()
         cart_items.all().delete()
 
@@ -155,6 +169,56 @@ class OrderDetailView(DetailView):
         obj = self.get_object()
         context["items"] = json.loads(obj.items)
         return context
+
+
+class PromtionView(FormView):
+    model = PromotionCodeModel
+    template_name = "cart.html"
+    form_class = PromtionForm
+    success_url = reverse_lazy('cart')
+
+    def form_valid(self, form):
+        cart = get_session(self.request)
+        # herokuのエラー回避のため、セッションにはデフォルトで[]を指定
+        session_promotion = self.request.session.get('code', [])
+        input_code = form.cleaned_data['code']
+        tmp_promo = PromotionCodeModel.objects.filter(code=input_code)
+        if tmp_promo.exists():
+            code = PromotionCodeModel.objects.get(code=input_code)
+            # プロモーションコードのセッションがあって、is_usedがTrueのパターン
+            if input_code in session_promotion and code.is_used is True:
+                discounted_price = cart.apply_code(input_code)
+                code = PromotionCodeModel.objects.get(code=input_code)
+                context = {
+                    'cart': cart,
+                    'cart_items':cart.cartitemmodel_set.all(),
+                    'discounted_price': discounted_price,
+                    'code': code,
+                    'amount': code.amount,
+                    'is_used': code.is_used
+                }
+                return render(self.request, 'cart.html', context)
+            # プロモーションコードが既に使用済みのパターン
+            if code.is_used is True:
+                return redirect('/cart/')
+            # プロモーションコードを初めて使うパターン
+            if code.is_used is False:
+                discounted_price = cart.apply_code(input_code)
+                code = PromotionCodeModel.objects.get(code=input_code)
+                self.request.session['code'] = code.code
+                context = {
+                    'cart': cart,
+                    'cart_items':cart.cartitemmodel_set.all(),
+                    'discounted_price': discounted_price,
+                    'code': code,
+                    'amount': code.amount,
+                    'is_used': code.is_used
+                }
+                code.is_used = True
+                code.save()
+                return render(self.request, 'cart.html', context)
+        # プロモーションコードがDBのレコードと一致しないパターン
+        return redirect('/cart/')
 
 
 @requires_csrf_token
