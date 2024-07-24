@@ -8,10 +8,10 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         for n in range(10):
-            promotion_code = get_random_string(7)
+            code = get_random_string(7)
             amount = random.randint(100, 1000)
             
             obj, created = PromotionCodeModel.objects.get_or_create(
-                promotion_code = promotion_code,
+                code = code,
                 amount = amount
             )
